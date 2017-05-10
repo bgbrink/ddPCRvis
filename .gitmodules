@@ -1,0 +1,3 @@
+[submodule "dropClust"]
+	path = dropClust
+	url = https://github.com/bgbrink/dropClust.git
