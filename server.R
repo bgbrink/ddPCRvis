@@ -17,8 +17,6 @@ tryCatch( {
 # setting this option. Here we'll set limit to 1MB.
 options(shiny.maxRequestSize = 1*1024^2)
 
-myNames <<- c("Empties","1","2","3","4","1+2","1+3","1+4","2+3","2+4","3+4","1+2+3","1+2+4","1+3+4","2+3+4","1+2+3+4","Removed","Total")
-
 shinyServer(function(input, output, session) {
   
   #### Reseting Parameters for each session ####
