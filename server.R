@@ -9,7 +9,7 @@ tryCatch( {
   # load package w/o installing
   library(devtools)
   load_all('dropClust/')
-}, error = function() {
+}, error = function(e) {
   # load dropClust package
   library(dropClust)
 })
