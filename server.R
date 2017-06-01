@@ -3,6 +3,7 @@ library(shinyjs)
 library(rhandsontable)
 library(ggplot2)
 library(parallel)
+library(R.utils)
 
 # Check if submodule folder is present 
 tryCatch( {
@@ -628,23 +629,20 @@ shinyServer(function(input, output, session) {
 
 dens_wrapper <- function(File, sensitivity=1, NumOfMarkers, markerNames) {
   missingClusters <- which(markerNames == "")
-  result <- tryCatch(runDensity(File[,c(2,1)], sensitivity, NumOfMarkers, missingClusters), error = function(e) {
-    print(e)
-  })
+  result <- tryCatch(expr = evalWithTimeout(runDensity(File[,c(2,1)], sensitivity, NumOfMarkers, missingClusters), timeout = 30), 
+           TimeoutException = function(ex) "TimedOut", error = function(e) print(e))
 }
 
 sam_wrapper <- function(File, sensitivity=1, NumOfMarkers, markerNames) {
   missingClusters <- which(markerNames == "")
-  result <- tryCatch(runSam(File[,c(2,1)], sensitivity, NumOfMarkers, missingClusters), error = function(e) {
-    print(e)
-  })
+  result <- tryCatch(expr = evalWithTimeout(runSam(File[,c(2,1)], sensitivity, NumOfMarkers, missingClusters), timeout = 30), 
+                     TimeoutException = function(ex) "TimedOut", error = function(e) print(e))
 }
 
 peaks_wrapper <- function(File, sensitivity=1, NumOfMarkers, markerNames) {
   missingClusters <- which(markerNames == "")
-  result <- tryCatch(runPeaks(File[,c(2,1)], sensitivity, NumOfMarkers, missingClusters), error = function(e) {
-    print(e)
-  })
+  result <- tryCatch(expr = evalWithTimeout(runPeaks(File[,c(2,1)], sensitivity, NumOfMarkers, missingClusters), timeout = 30), 
+                     TimeoutException = function(ex) "TimedOut", error = function(e) print(e))
 }
 
 ensemble_wrapper <- function(dens_result, sam_result, peaks_result, file) {
