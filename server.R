@@ -3,11 +3,16 @@ library(shinyjs)
 library(rhandsontable)
 library(ggplot2)
 library(parallel)
-library(devtools)
 
-# load package w/o installing
-load_all('dropClust/')
-
+# Check if submodule folder is present 
+tryCatch( {
+  # load package w/o installing
+  library(devtools)
+  load_all('dropClust/')
+}, error = function() {
+  # load dropClust package
+  library(dropClust)
+})
 # By default, the file size limit is 5MB. It can be changed by
 # setting this option. Here we'll set limit to 1MB.
 options(shiny.maxRequestSize = 1*1024^2)
@@ -573,21 +578,21 @@ shinyServer(function(input, output, session) {
     superResults[[input$well]] <<- tmpResult 
   })
   
-  observe({
-    choices <- c(2:16, 1)
-    plex <- as.character(template[template[1] == input$well,][[3]])
-    if (length(plex) < 1) plex <- 0
-    switch(as.character(plex),
-           '1' = {choices <- c(2,1)
-           names(choices) <- myNames[c(1,16)]},
-           '2' = {choices <- c(2:4,1)
-           names(choices) <- myNames[c(1,2,5,16)]},
-           '3' = {choices <- c(2:8,1)
-           names(choices) <- myNames[c(1,2,3,5,6,8,11,16)]},
-           '4' = {choices <- c(2:16, 1)
-           names(choices) <- myNames[1:16]})
-    updateRadioButtons(session, 'clusters', 'Edit Cluster:', choices, inline = T)
-  })
+  # observe({
+  #   choices <- c(2:16, 1)
+  #   plex <- as.character(template[template[1] == input$well,][[3]])
+  #   if (length(plex) < 1) plex <- 0
+  #   switch(as.character(plex),
+  #          '1' = {choices <- c(2,1)
+  #          names(choices) <- myNames[c(1,16)]},
+  #          '2' = {choices <- c(2:4,1)
+  #          names(choices) <- myNames[c(1,2,5,16)]},
+  #          '3' = {choices <- c(2:8,1)
+  #          names(choices) <- myNames[c(1,2,3,5,6,8,11,16)]},
+  #          '4' = {choices <- c(2:16, 1)
+  #          names(choices) <- myNames[1:16]})
+  #   updateRadioButtons(session, 'clusters', 'Edit Cluster:', choices, inline = T)
+  # })
   
   observeEvent(input$rerunButton, {
     id <- input$well

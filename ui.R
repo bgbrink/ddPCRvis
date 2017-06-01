@@ -3,7 +3,7 @@ library(shinyjs)
 library(rhandsontable)
 
 shinyUI(tagList(useShinyjs(),
-                navbarPage("dropVis v0.9", id = "mainPage",
+                navbarPage("dropVis v0.91", id = "mainPage",
                            tabPanel("Upload Files", id='panel1',
                                     sidebarLayout(
                                       sidebarPanel(
@@ -19,7 +19,7 @@ shinyUI(tagList(useShinyjs(),
                                                   )
                                         ),
                                         p("First, upload a single template file, which specifies the setup of the ddPCR reactions.
-                                          Specifications on how this file needs to be formatted can be found", a("here"), "."),
+                                          Specifications on how this file needs to be formatted can be found", a(href="https://github.com/bgbrink/dropClust", target="_blank", "here"), "."),
                                         br(),
                                         fileInput('files', 'Choose file(s) to upload',
                                                   multiple = T,
@@ -33,7 +33,7 @@ shinyUI(tagList(useShinyjs(),
                                                   )
                                         ),
                                         p("After the template has been succesfully set up, please upload the raw data files from the ddPCR run.
-                                          Specifications on how these files need to be formatted can be found", a("here"), "."),
+                                          Specifications on how these files need to be formatted can be found", a(href="https://github.com/bgbrink/dropClust", target="_blank", "here"), "."),
                                         br(),
                                         checkboxInput('dens', 'Run flowDensity', TRUE),
                                         checkboxInput('sam', 'Run SamSPECTRAL', TRUE),
@@ -79,7 +79,7 @@ shinyUI(tagList(useShinyjs(),
                                         selectInput("well", "Select Well:", NULL),
                                         #checkboxGroupInput('markers', 'Show Marker(s):', c('1', '2', '3', '4'), c(1,2,3,4), inline = T),
                                         p("Select the cluster you want to edit and draw a rectangle around the droplets that should be assigned to it in the black-and-white plot. Click 'save' to save your changes and continue with the next cluster or well."),
-                                        radioButtons('clusters', NULL, c(2:16, 1), inline = T),
+                                        radioButtons('clusters', NULL, choiceNames = myNames[1:16], choiceValues = c(1:16), inline = T),
                                         actionButton('cancel', "Cancel"),
                                         actionButton('save', "Save"),
                                         sliderInput("sensitivity", "Sensitivity",
