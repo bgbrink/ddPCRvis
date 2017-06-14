@@ -8,7 +8,7 @@ shinyUI(tagList(useShinyjs(),
                            tabPanel("Upload Files", id='panel1',
                                     sidebarLayout(
                                       sidebarPanel(
-                                        fileInput('templateFile', 'Please upload the template',
+                                        fileInput('templateFile', 'Choose template to upload',
                                                   multiple = F,
                                                   accept = c(
                                                     'text/csv',
@@ -20,7 +20,7 @@ shinyUI(tagList(useShinyjs(),
                                                   )
                                         ),
                                         p("First, upload a single template file, which specifies the setup of the ddPCR reactions.
-                                          Specifications on how this file needs to be formatted can be found", a(href="https://github.com/bgbrink/dropClust", target="_blank", "here"), "."),
+                                          For specifications on how this file needs to be formatted, please check the ", a(href="https://github.com/bgbrink/dropClust", target="_blank", "dropClust"), "page on Github."),
                                         br(),
                                         fileInput('files', 'Choose file(s) to upload',
                                                   multiple = T,
@@ -33,13 +33,14 @@ shinyUI(tagList(useShinyjs(),
                                                     '.tsv'
                                                   )
                                         ),
-                                        p("After the template has been succesfully set up, please upload the raw data files from the ddPCR run.
-                                          Specifications on how these files need to be formatted can be found", a(href="https://github.com/bgbrink/dropClust", target="_blank", "here"), "."),
+                                        p("Then, upload the raw data files from the ddPCR run.
+                                          For specifications on how these files needs to be formatted, please check the ", a(href="https://github.com/bgbrink/dropClust", target="_blank", "dropClust"), "page on Github."),
                                         br(),
                                         checkboxInput('dens', 'Run flowDensity', TRUE),
                                         checkboxInput('sam', 'Run SamSPECTRAL', TRUE),
                                         checkboxInput('peaks', 'Run flowPeaks', TRUE),
-                                        actionButton('run', "Run Analysis!"),
+                                        actionButton('run', "Run Analysis!", icon("paper-plane"), 
+                                                     style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
                                         width = 2
                                         ),
                                       mainPanel(
@@ -59,11 +60,12 @@ shinyUI(tagList(useShinyjs(),
                                         #                                         br(),
                                         downloadButton('downloadRawData', "Download raw data"),
                                         downloadButton('downloadPlots', "Download all plots"),
-                                        p("(This may take a while!)"),
-                                        p("If you are unhappy with the automatic clustering, you can change it manually:"),
+                                        p("Download the raw data with a cluster number assigned to each point and the respective plots (this may take a while!)"),
+                                        p("If you are unhappy with the automatic clustering, you can re-run it or change it manually, using link and brush:"),
                                         actionButton('editButton', "Edit clustering"),
                                         p("When you are satisfied, make sure you hit the following button to count the droplets and save the results:"),
-                                        actionButton('continueButton', "Count droplets!"),
+                                        actionButton('continueButton', "Count droplets!", icon("check-square"), 
+                                                     style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
                                         width = 2
                                       ),
                                       mainPanel(
@@ -102,8 +104,8 @@ shinyUI(tagList(useShinyjs(),
                            tabPanel("Results", id='panel3',
                                     sidebarLayout(
                                       sidebarPanel(
-                                        p("Here you can see the results of the clustering. 
-                                          The second tab shows results according to each marker taken from the template, with its respective copies per droplet (CPD). 
+                                        p("This page contains the numerical results of the clustering. It shows both the raw droplet count per cluster, as well as the
+                                          results according to each marker taken from the template, with its respective copies per droplet (CPD). 
                                           You can download the spreadsheets:"),
                                         downloadButton('downloadData', 'Download'),
                                         actionButton('resetData', 'Clear'),
