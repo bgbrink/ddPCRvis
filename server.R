@@ -37,6 +37,7 @@ shinyServer(function(input, output, session) {
   # reactive table for rhandsontable
   values <- reactiveValues() 
   setHot <- function(x) values[["hot"]] = x
+
   
   observe({
     if (!is.null(input$template)) {
@@ -141,38 +142,35 @@ shinyServer(function(input, output, session) {
     } else {
       nrOfCores <- detectCores()
     }
-    
-    numberOfAlgorithms <- input$dens + input$sam + input$peaks
-    if (numberOfAlgorithms > 0) {
-      sens <- input$sensitivity
-      csvFiles <- mclapply(files, read.csv, mc.cores = nrOfCores)
-      selectedRows <- subset(DF, DF[,8] == TRUE)
-      filesAnalyzed <<- as.character(selectedRows[[1]])
-      plex <- sapply(names(csvFiles), function(x) {as.numeric(as.character(selectedRows[which(filesAnalyzed == x), 3]))})
-      markerNames <- lapply(names(csvFiles), function(x) {unlist(selectedRows[which(filesAnalyzed == x), 4:7])})
-      dens_result <- sam_result <- peaks_result <- rep(0, length(csvFiles))
-      names(dens_result) <- names(sam_result) <- names(peaks_result) <- filesAnalyzed
-      withProgress(message = "Calculating:", value = 0, {
-        if(input$dens) {
-          incProgress(1/(numberOfAlgorithms+1), detail = "flowDensity")
-          dens_result <- mcmapply(dens_wrapper, File=csvFiles, NumOfMarkers=plex, sensitivity=sens, markerNames=markerNames, SIMPLIFY = F, mc.cores = nrOfCores)
-        }
-        if(input$sam) {
-          incProgress(1/(numberOfAlgorithms+1), detail = "SamSPECTRAL")
-          sam_result <- mcmapply(sam_wrapper, File=csvFiles, NumOfMarkers=plex, sensitivity=sens, markerNames=markerNames, SIMPLIFY = F, mc.cores = nrOfCores)
-        }
-        if(input$peaks) {
-          incProgress(1/(numberOfAlgorithms+1), detail = "flowPeaks")
-          peaks_result <- mcmapply(peaks_wrapper, File=csvFiles, NumOfMarkers=plex, sensitivity=sens, markerNames=markerNames, SIMPLIFY = F, mc.cores = nrOfCores)
-        }
-        incProgress(1/(numberOfAlgorithms+1), detail = "cluster ensemble")
-        superResults <<- mcmapply(ensemble_wrapper, dens_result, sam_result, peaks_result, csvFiles, SIMPLIFY = F, mc.cores = nrOfCores)
-        updateNavbarPage(session, 'mainPage', selected = 'Clustering')
-      })
+
+    sens <- input$sensitivity
+    csvFiles <- mclapply(files, read.csv, mc.cores = nrOfCores)
+    selectedRows <- subset(DF, DF[,8] == TRUE)
+    filesAnalyzed <<- as.character(selectedRows[[1]])
+    plex <- sapply(names(csvFiles), function(x) {as.numeric(as.character(selectedRows[which(filesAnalyzed == x), 3]))})
+    markerNames <- lapply(names(csvFiles), function(x) {unlist(selectedRows[which(filesAnalyzed == x), 4:7])})
+    dens_result <- sam_result <- peaks_result <- rep(0, length(csvFiles))
+    names(dens_result) <- names(sam_result) <- names(peaks_result) <- filesAnalyzed
+    if(input$quick) {
+      steps <- 2
     } else {
-      info("No algorithm selected!")
-      return(NULL)
+      steps <- 4
     }
+    withProgress(message = "Calculating:", value = 0, {
+      incProgress(1/steps, detail = "flowDensity clustering")
+      dens_result <- mcmapply(dens_wrapper, File=csvFiles, NumOfMarkers=plex, sensitivity=sens, markerNames=markerNames, SIMPLIFY = F, mc.cores = nrOfCores)
+      
+      if(!input$quick) {
+        incProgress(1/steps, detail = "SamSPECTRAL clustering")
+        sam_result <- mcmapply(sam_wrapper, File=csvFiles, NumOfMarkers=plex, sensitivity=sens, markerNames=markerNames, SIMPLIFY = F, mc.cores = nrOfCores)
+        
+        incProgress(1/steps, detail = "flowPeaks clustering")
+        peaks_result <- mcmapply(peaks_wrapper, File=csvFiles, NumOfMarkers=plex, sensitivity=sens, markerNames=markerNames, SIMPLIFY = F, mc.cores = nrOfCores)
+      }
+      incProgress(1/steps, detail = "Consensus clustering")
+      superResults <<- mcmapply(ensemble_wrapper, dens_result, sam_result, peaks_result, csvFiles, SIMPLIFY = F, mc.cores = nrOfCores)
+      updateNavbarPage(session, 'mainPage', selected = 'Clustering')
+    })
   })
   
   createOriginalPlots <- reactive ({
@@ -328,9 +326,18 @@ shinyServer(function(input, output, session) {
             paste("test" , my_i)
           })
         } else {
+          if (result$confidence > 0.95) {
+            color <- "Lime"
+          } else if (result$confidence > 0.9) {
+            color <- "Yellow"
+          } else if (result$confidence > 0.85) {
+            color <- "Orange"
+          } else {
+            color <- "OrangeRed"
+          }
           output[[plotname]] <- renderUI({
-            str1 <- paste(my_i, "<br/>The agreement between the algorithms is:")
-            str2 <- paste(round(result$confidence*100, 2), " %")
+            str1 <- paste0(my_i, "<p>The agreement between <b>", result$nrOfAlgorithms,"</b> approaches is:</p>")
+            str2 <- paste0("<p style=font-weight:bold;text-align:center;background-color:",color,">", round(result$confidence*100, 2), " %</p>")
             HTML(paste(str1, str2, sep = '<br/>'))
           })
         }
@@ -513,6 +520,9 @@ shinyServer(function(input, output, session) {
   output$originalPlotEdit <- renderUI({
     column(5,
            p(strong("Original Data:")),{
+             if (length(files) == 0) {
+               return(NULL)
+             }
              File <- read.csv(files[[input$well]])
              File <- File[,c(2,1)]
              output[['original_Plot']] <- renderPlot({
@@ -530,6 +540,9 @@ shinyServer(function(input, output, session) {
     
     column(5,
            p(strong("Clustering")),{
+             if (length(files) == 0) {
+               return(NULL)
+             }
              output[['selected_Plot']] <- renderPlot({
                if (length(tmpResult$counts) == 18) {
                  cbPalette <- c("#999999", "#f272e6","#e5bdbe","#bf0072","#cd93c5","#5e7f65","#1fba00","#2c5d26","#bdef00","#529900","#ffe789","#575aef","#a3b0fa","#005caa","#019df8", "#bc8775")
@@ -541,7 +554,9 @@ shinyServer(function(input, output, session) {
                  cbPalette <- c("#999999", "#bc8775")
                }
                p <- ggplot(data = tmpResult$data, mapping = aes(x = Ch2.Amplitude, y = Ch1.Amplitude))
-               p <- p + geom_point(aes(color = factor(Cluster)), size = .5, na.rm = T) + ggtitle(input$well) + theme_bw()+ theme(legend.position="none") + scale_colour_manual(values=cbPalette, limits = 1:(length(tmpResult$counts)-2))
+               p <- p + geom_point(aes(color = factor(Cluster)), size = .5, na.rm = T) + ggtitle(input$well) + theme_bw() + theme(legend.title=element_blank()) +
+                 theme(legend.text = element_text(size = 16)) + guides(colour = guide_legend(override.aes = list(size=6))) +
+                 scale_colour_manual(values=cbPalette, limits = 1:(length(tmpResult$counts)-2), labels = myNames)
                p
              })
              plotOutput('selected_Plot')
