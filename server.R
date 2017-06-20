@@ -9,7 +9,11 @@ library(R.utils)
 tryCatch( {
   # load package w/o installing
   library(devtools)
-  load_all('dropClust/')
+  if (dir.exists('/srv/shinyApps/dropVis/dropClust')) {
+    load_all('/srv/shinyApps/dropVis/dropClust')
+  } else {
+    load_all('dropClust/')
+  }
 }, error = function(e) {
   # load dropClust package
   library(dropClust)
@@ -326,11 +330,11 @@ shinyServer(function(input, output, session) {
             paste("test" , my_i)
           })
         } else {
-          if (result$confidence > 0.95) {
+          if (result$confidence > 0.98) {
             color <- "Lime"
-          } else if (result$confidence > 0.9) {
+          } else if (result$confidence > 0.95) {
             color <- "Yellow"
-          } else if (result$confidence > 0.85) {
+          } else if (result$confidence > 0.9) {
             color <- "Orange"
           } else {
             color <- "OrangeRed"
