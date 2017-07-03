@@ -9,8 +9,8 @@ library(R.utils)
 tryCatch( {
   # load package w/o installing
   library(devtools)
-  if (dir.exists('/srv/shinyApps/dropVis/dropClust')) {
-    load_all('/srv/shinyApps/dropVis/dropClust')
+  if (dir.exists('/srv/shinyapps/dropVis/dropClust')) {
+    load_all('/srv/shinyapps/dropVis/dropClust')
   } else {
     load_all('dropClust/')
   }
@@ -258,7 +258,7 @@ shinyServer(function(input, output, session) {
           })
         } else {
           if (length(result$counts) == 18) {
-            cbPalette <- c("#999999", "#f272e6","#e5bdbe","#bf0072","#cd93c5","#5e7f65","#1fba00","#2c5d26","#bdef00","#529900","#ffe789","#575aef","#a3b0fa","#005caa","#019df8", "#bc8775")
+            cbPalette <- c("#999999", "#f272e6","#e5bdbe","#bf0072","#cd93c5", "#1fba00","#5e7f65","#bdef00","#2c5d26","#ffe789","#4a8c00", "#575aef","#a3b0fa","#005caa","#01c8fe", "#bc8775")
           } else if (length(result$counts) == 10) {
             cbPalette <- c("#999999", "#d800c4","#fca3a7","#bb004e", "#70cf56","#8b9d61","#ccd451", "#bc8775")
           } else if (length(result$counts) == 6) {
@@ -388,14 +388,14 @@ shinyServer(function(input, output, session) {
     for (i in filesAnalyzed) {
       local({
         my_i <- i
-        myCounts <- c(my_i, superResults[[my_i]]$counts)
+        myCounts <- c(my_i, as.numeric(superResults[[my_i]]$counts))
         myCountedMarkers <- countedSuper[[my_i]]
         markers <- names(myCountedMarkers)
         sampleName <- template[template[,1] == my_i,2]
         for (j in markers) {
           tmp <- myCountedMarkers[[j]]
           if (length(tmp) == 1) next
-          markerRow <- c(my_i, sampleName, j, tmp$counts, tmp$cpd)
+          markerRow <- c(my_i, sampleName, j, as.numeric(tmp$counts), as.numeric(tmp$cpd))
           names(markerRow) <- c("Well","Sample name", "Marker", "droplet count", "CPD")
           isolate(saveData(markerRow, "Marker"))
         }
@@ -412,14 +412,14 @@ shinyServer(function(input, output, session) {
     for (i in filesAnalyzed) {
       local({
         my_i <- i
-        myCounts <- c(my_i, superResults[[my_i]]$counts)
+        myCounts <- c(my_i, as.numeric(superResults[[my_i]]$counts))
         myCountedMarkers <- countedSuper[[my_i]]
         markers <- names(myCountedMarkers)
         sampleName <- template[template[,1] == my_i,2]
         for (j in markers) {
           tmp <- myCountedMarkers[[j]]
           if (length(tmp) == 1) next
-          markerRow <- c(my_i, sampleName, j, tmp$counts, tmp$cpd)
+          markerRow <- c(my_i, sampleName, j, as.numeric(tmp$counts), as.numeric(tmp$cpd))
           names(markerRow) <- c("Well","Sample name", "Marker", "droplet count", "CPD")
           isolate(saveData(markerRow, "Marker"))
         }
@@ -549,7 +549,7 @@ shinyServer(function(input, output, session) {
              }
              output[['selected_Plot']] <- renderPlot({
                if (length(tmpResult$counts) == 18) {
-                 cbPalette <- c("#999999", "#f272e6","#e5bdbe","#bf0072","#cd93c5","#5e7f65","#1fba00","#2c5d26","#bdef00","#529900","#ffe789","#575aef","#a3b0fa","#005caa","#019df8", "#bc8775")
+                 cbPalette <- c("#999999", "#f272e6","#e5bdbe","#bf0072","#cd93c5", "#1fba00","#5e7f65","#bdef00","#2c5d26","#ffe789","#4a8c00", "#575aef","#a3b0fa","#005caa","#01c8fe", "#bc8775")
                } else if (length(tmpResult$counts) == 10) {
                  cbPalette <- c("#999999", "#d800c4","#fca3a7","#bb004e", "#70cf56","#8b9d61","#ccd451", "#bc8775")
                } else if (length(tmpResult$counts) == 6) {
@@ -615,33 +615,31 @@ shinyServer(function(input, output, session) {
   observeEvent(input$rerunButton, {
     id <- input$well
     names(id) = 'ID'
-    numberOfAlgorithms <- input$dens + input$sam + input$peaks
-    if (numberOfAlgorithms > 0) {
-      plex <- as.numeric(as.character(subset(template, template[,1] == id)[[3]]))
-      markerNames <- unlist(subset(template, template[,1] == id)[4:7])
-      if (is.null(plex)) stop()
-      dens_result <- sam_result <- peaks_result <- 0
-      sens <- input$sensitivity
-      csvFiles <- read.csv(files[[id]])
-      withProgress(message = "Calculating:", value = 0, {    
-        if(input$dens) {
-          incProgress(1/(numberOfAlgorithms+1), detail = "flowDensity")
-          dens_result <- dens_wrapper(File=csvFiles, NumOfMarkers=plex, sensitivity=sens, markerNames = markerNames)
-        }
-        if(input$sam) {
-          incProgress(1/(numberOfAlgorithms+1), detail = "SamSPECTRAL")
-          sam_result <- sam_wrapper(File=csvFiles, NumOfMarkers=plex, sensitivity=sens, markerNames = markerNames)
-        }
-        if(input$peaks) {
-          incProgress(1/(numberOfAlgorithms+1), detail = "flowPeaks")
-          peaks_result <- peaks_wrapper(File=csvFiles, NumOfMarkers=plex, sensitivity=sens, markerNames = markerNames)
-        }
-        incProgress(1/(numberOfAlgorithms+1), detail = "cluster ensemble")
-        superResults[[id]] <<- ensemble_wrapper(dens_result, sam_result, peaks_result, csvFiles)
-      })
+    plex <- as.numeric(as.character(subset(template, template[,1] == id)[[3]]))
+    markerNames <- unlist(subset(template, template[,1] == id)[4:7])
+    if (is.null(plex)) stop()
+    dens_result <- sam_result <- peaks_result <- 0
+    sens <- input$sensitivity
+    csvFiles <- read.csv(files[[id]])
+    if(input$quick) {
+      steps <- 2
     } else {
-      info("No algorithm selected!")
+      steps <- 4
     }
+    withProgress(message = "Calculating:", value = 0, {    
+      incProgress(1/steps, detail = "flowDensity clustering")
+      dens_result <- dens_wrapper(File=csvFiles, NumOfMarkers=plex, sensitivity=sens, markerNames = markerNames)
+        
+      if(input$quick) {
+        incProgress(1/steps, detail = "SamSPECTRAL clustering")
+        sam_result <- sam_wrapper(File=csvFiles, NumOfMarkers=plex, sensitivity=sens, markerNames = markerNames)
+        
+        incProgress(1/steps, detail = "flowPeaks clustering")
+        peaks_result <- peaks_wrapper(File=csvFiles, NumOfMarkers=plex, sensitivity=sens, markerNames = markerNames)
+      }
+      incProgress(1/steps, detail = "Consensus clustering")
+      superResults[[id]] <<- ensemble_wrapper(dens_result, sam_result, peaks_result, csvFiles)
+    })
   })
 })
 
