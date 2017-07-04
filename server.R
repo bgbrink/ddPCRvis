@@ -9,8 +9,8 @@ library(R.utils)
 tryCatch( {
   # load package w/o installing
   library(devtools)
-  if (dir.exists('/srv/shinyapps/dropVis/dropClust')) {
-    load_all('/srv/shinyapps/dropVis/dropClust')
+  if (dir.exists('/srv/shiny-server/dropVis/dropClust')) {
+    load_all('/srv/shiny-server/dropVis/dropClust')
   } else {
     load_all('dropClust/')
   }
@@ -37,6 +37,13 @@ shinyServer(function(input, output, session) {
   plots <<- list()
   template <<- NULL
   ##############################################
+  
+  # detect number of cores for parallelization
+  if (Sys.info()['sysname'] == "Windows") {
+    nrOfCores <- 1
+  } else {
+    nrOfCores <- detectCores()
+  }
   
   # reactive table for rhandsontable
   values <- reactiveValues() 
@@ -141,11 +148,6 @@ shinyServer(function(input, output, session) {
       info(paste("No files uploaded for the selected well(s)", filesToAnalyze[,1][check]))
       return(NULL)
     }
-    if (Sys.info()['sysname'] == "Windows") {
-      nrOfCores <- 1
-    } else {
-      nrOfCores <- detectCores()
-    }
 
     sens <- input$sensitivity
     csvFiles <- mclapply(files, read.csv, mc.cores = nrOfCores)
@@ -219,10 +221,10 @@ shinyServer(function(input, output, session) {
                
                createOriginalPlots()
                
-               plot_output_list <- lapply(1:length(filesAnalyzed), function(i) {
+               plot_output_list <- mclapply(1:length(filesAnalyzed), function(i) {
                  plotname <- paste("originalPlot", filesAnalyzed[i], sep="")
                  plotOutput(plotname)
-               })
+               }, mc.cores = nrOfCores)
                
                
                # Convert the list to a tagList - this is necessary for the list of items
@@ -297,10 +299,10 @@ shinyServer(function(input, output, session) {
                
                createClusterPlots()
                
-               plot_output_list <- lapply(1:length(filesAnalyzed), function(i) {
+               plot_output_list <- mclapply(1:length(filesAnalyzed), function(i) {
                  plotname <- paste("clusterPlot", filesAnalyzed[i], sep="")
                  plotOutput(plotname)
-               })
+               }, mc.cores = nrOfCores)
                
                # Convert the list to a tagList - this is necessary for the list of items
                # to display properly.
@@ -325,7 +327,7 @@ shinyServer(function(input, output, session) {
         my_i <- i
         plotname <- paste("confidenceText", my_i, sep="")
         result <- superResults[[my_i]]
-        if (is.null(result)) {
+        if (is.atomic(result) || is.null(result$confidence)) {
           output[[plotname]] <- renderUI({
             paste("test" , my_i)
           })
@@ -365,10 +367,10 @@ shinyServer(function(input, output, session) {
                
                createConfidence()
                
-               text_output_list <- lapply(1:length(filesAnalyzed), function(i) {
+               text_output_list <- mclapply(1:length(filesAnalyzed), function(i) {
                  plotname <- paste("confidenceText", filesAnalyzed[i], sep="")
                  htmlOutput(plotname, style="height:400px;")
-               })
+               }, mc.cores = nrOfCores)
                
                # Convert the list to a tagList - this is necessary for the list of items
                # to display properly.
@@ -663,13 +665,13 @@ peaks_wrapper <- function(File, sensitivity=1, NumOfMarkers, markerNames) {
 }
 
 ensemble_wrapper <- function(dens_result, sam_result, peaks_result, file) {
-  if (is.numeric(dens_result)) {
+  if (is.atomic(dens_result)) {
     dens_result <- NULL
   }
-  if (is.numeric(sam_result)) {
+  if (is.atomic(sam_result)) {
     sam_result <- NULL
   }
-  if (is.numeric(peaks_result)) {
+  if (is.atomic(peaks_result)) {
     peaks_result <- NULL
   }
   result <- tryCatch(createEnsemble(dens_result, sam_result, peaks_result, file[,c(2,1)]), error = function(e) {
