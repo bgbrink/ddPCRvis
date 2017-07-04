@@ -4,7 +4,7 @@ library(rhandsontable)
 myNames <<- c("Empties","1","2","3","4","1+2","1+3","1+4","2+3","2+4","3+4","1+2+3","1+2+4","1+3+4","2+3+4","1+2+3+4","Removed","Total")
 
 shinyUI(tagList(useShinyjs(),
-                navbarPage("dropVis v0.93", id = "mainPage",
+                navbarPage("dropVis v0.94", id = "mainPage",
                            tabPanel("Upload Files", id='panel1',
                                     sidebarLayout(
                                       sidebarPanel(
@@ -36,8 +36,8 @@ shinyUI(tagList(useShinyjs(),
                                         p("Then, upload the raw data files from the ddPCR run.
                                           For specifications on how these files needs to be formatted, please check the ", a(href="https://github.com/bgbrink/dropClust", target="_blank", "dropClust"), "page on Github."),
                                         br(),
-                                        checkboxInput('quick', 'Run fast, but less precise. Useful for very clean data or to get a quick overview.', FALSE),
-                                        actionButton('run', "Run Analysis!", icon("paper-plane"), 
+                                        checkboxInput('quick', 'Run a simple version of the algorithm that is about 10x faster. For clean data, this can already deliver very good results. In any case useful to get a quick overview over the data.', TRUE),
+                                        actionButton('run', "Start Analysis!", icon("paper-plane"), 
                                                      style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
                                         width = 2
                                         ),
