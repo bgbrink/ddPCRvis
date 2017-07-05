@@ -391,6 +391,7 @@ shinyServer(function(input, output, session) {
       local({
         my_i <- i
         myCounts <- c(my_i, as.numeric(superResults[[my_i]]$counts))
+        names(myCounts) <- c("Well", names(superResults[[my_i]]$counts))
         myCountedMarkers <- countedSuper[[my_i]]
         markers <- names(myCountedMarkers)
         sampleName <- template[template[,1] == my_i,2]
@@ -492,7 +493,7 @@ shinyServer(function(input, output, session) {
       tempdir = paste0(tempdir(),"/", as.integer(Sys.time()), "/")
       dir.create(tempdir, showWarnings = F)
       for (i in 1:length(responses)) {
-        if (length(responses) >= i) write.csv(responses[[i]], file = paste0(tempdir, "Results_", names(responses)[i], ".csv"))
+        if (length(responses) >= i) write.csv(responses[[i]], file = paste0(tempdir, "Results_", names(responses)[i], ".csv"), row.names = F)
       }
       zip(zipfile = file, files = tempdir, flags = "-rj9X")
     })
