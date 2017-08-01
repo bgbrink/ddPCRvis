@@ -1,13 +1,24 @@
-library(shiny)
-library(shinyjs)
-library(rhandsontable)
-myNames <<- c("Empties","1","2","3","4","1+2","1+3","1+4","2+3","2+4","3+4","1+2+3","1+2+4","1+3+4","2+3+4","1+2+3+4","Removed","Total")
-
 shinyUI(tagList(useShinyjs(),
-                navbarPage("dropVis v0.94", id = "mainPage",
+                # Include IntroJS styling
+                includeCSS("wwwIntroJS/introjs.min.css"),
+                
+                # Include styling for the app
+                includeCSS("wwwIntroJS/app.css"),
+                
+                # Include IntroJS library
+                includeScript("wwwIntroJS/intro.min.js"),
+                
+                # Include JavaScript code to make shiny communicate with introJS
+                includeScript("wwwIntroJS/app.js"),
+                
+                # Add includes to the head of the page using the resource path
+                actionButton('helpButton', 'Help', icon("question-circle"), style = "background-color:green;color:white;position:fixed;right:40px;top:10px;z-index:100000000000", onclick="startHelp();"),
+                navbarPage("dropVis v0.95", id = "mainPage",
                            tabPanel("Upload Files", id='panel1',
                                     sidebarLayout(
                                       sidebarPanel(
+                                        p("Welcome to dropVis, a visual interface for the dropClust package! If this is your first time here, click the green button in the top right corner."),
+                                        div(id="stepTemplate",
                                         fileInput('templateFile', 'Choose template to upload',
                                                   multiple = F,
                                                   accept = c(
@@ -18,10 +29,8 @@ shinyUI(tagList(useShinyjs(),
                                                     '.csv',
                                                     '.tsv'
                                                   )
-                                        ),
-                                        p("First, upload a single template file, which specifies the setup of the ddPCR reactions.
-                                          For specifications on how this file needs to be formatted, please check the ", a(href="https://github.com/bgbrink/dropClust", target="_blank", "dropClust"), "page on Github."),
-                                        br(),
+                                        )),
+                                        div(id="stepFiles",
                                         fileInput('files', 'Choose file(s) to upload',
                                                   multiple = T,
                                                   accept = c(
@@ -32,88 +41,105 @@ shinyUI(tagList(useShinyjs(),
                                                     '.csv',
                                                     '.tsv'
                                                   )
-                                        ),
-                                        p("Then, upload the raw data files from the ddPCR run.
-                                          For specifications on how these files needs to be formatted, please check the ", a(href="https://github.com/bgbrink/dropClust", target="_blank", "dropClust"), "page on Github."),
-                                        br(),
-                                        checkboxInput('quick', 'Run a simple version of the algorithm that is about 10x faster. For clean data, this can already deliver very good results. In any case useful to get a quick overview over the data.', TRUE),
+                                        )),
+                                        div(id="stepQuick",
+                                        checkboxInput('quick', 'Run fast version', TRUE)),
+                                        div(id="stepRun",
                                         actionButton('run', "Start Analysis!", icon("paper-plane"), 
-                                                     style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
+                                                     style="color: #fff; background-color: #337ab7; border-color: #2e6da4")),
                                         width = 2
                                         ),
                                       mainPanel(
                                         fluidRow(
-                                          rHandsontableOutput('template')
+                                          div(id="stepOutput",
+                                          rHandsontableOutput('template'))
                                         ),
                                         width=10))
                                     ),
                            tabPanel("Clustering", id='panel2',
                                     sidebarLayout(
                                       sidebarPanel(
-                                        #                                         sliderInput("formatSam", "Sensitivity (SamSPECTRAL)",
-                                        #                                                     min = .5, max = 2, value = 1, step = .5),
-                                        #                                         sliderInput("formatPeaks", "Sensitivity (flowPeaks)",
-                                        #                                                     min = .5, max = 2, value = 1, step = .5),
-                                        #                                         p("Adjust the sensitivity to find more (higher value) or less (lower value) cluster."),
-                                        #                                         br(),
+                                        p(strong("Please wait for the plots to appear on the right...")),
+                                        div(id="stepDownload",
                                         downloadButton('downloadRawData', "Download raw data"),
-                                        downloadButton('downloadPlots', "Download all plots"),
-                                        p("Download the raw data with a cluster number assigned to each point and the respective plots (this may take a while!)"),
+                                        downloadButton('downloadPlots', "Download all plots")),
+                                        div(id="stepEdit",
                                         p("If you are unhappy with the automatic clustering, you can re-run it or change it manually, using link and brush:"),
-                                        actionButton('editButton', "Edit clustering", icon("pencil-square-o")),
+                                        actionButton('editButton', "Edit clustering", icon("pencil-square-o"))),
+                                        div(id="stepCount",
                                         p("When you are satisfied, make sure you hit the following button to count the droplets and save the results:"),
                                         actionButton('continueButton', "Count droplets!", icon("check-square"), 
-                                                     style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
+                                                     style="color: #fff; background-color: #337ab7; border-color: #2e6da4")),
                                         width = 2
                                       ),
                                       mainPanel(
                                         fluidRow(
+                                          div(id="stepPlots",
                                           uiOutput('originalPlot'),
                                           uiOutput('clusterPlot'),
-                                          htmlOutput('confidence')
+                                          htmlOutput('confidence'))
                                         ),
                                         width=10))
                            ),
                            tabPanel("Edit Clustering", id='panel4',
                                     sidebarLayout(
                                       sidebarPanel(
+                                        div(id="stepSelect",
                                         selectInput("well", "Select file:", NULL),
-                                        #checkboxGroupInput('markers', 'Show Marker(s):', c('1', '2', '3', '4'), c(1,2,3,4), inline = T),
-                                        p("Select the cluster you want to edit and draw a rectangle around the droplets that should be assigned to it in the black-and-white plot. Click 'save' to save your changes and continue with the next cluster or well."),
+                                        p("Select the cluster you want to edit and draw a rectangle around the droplets that should be assigned to it in the black-and-white plot. Click 'Save Changes' to save your changes and continue with the next cluster or well."),
                                         radioButtons('clusters', NULL, choiceNames = myNames[1:16], choiceValues = c(1:16), inline = T),
                                         actionButton('cancel', "Revert changes", icon("undo")),
-                                        actionButton('save', "Save changes", icon("floppy-o")),
+                                        actionButton('save', "Save changes", icon("floppy-o"))),
+                                        div(id="stepRerun",
                                         sliderInput("sensitivity", "Sensitivity",
                                                     min = .25, max = 2, value = 1, step = .25),
                                         p("Adjust the sensitivity to find more (higher value) or less (lower value) cluster. Click the Re-Run button to run dropClust again for the selected file."),
                                         p("When you are satisfied, make sure you hit the following button to count the droplets and save the results:"),
                                         actionButton('rerunButton', "Re-Run Algorithm", icon("refresh")),
                                         actionButton('continueButton2', "Count droplets!", icon("check-square"), 
-                                                     style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
+                                                     style="color: #fff; background-color: #337ab7; border-color: #2e6da4")),
                                         width = 2
                                       ),
                                       mainPanel(
                                         fluidRow(
+                                          div(id="stepEditPlots",
                                           uiOutput('originalPlotEdit'),
                                           uiOutput('clusterPlotEdit'),
-                                          htmlOutput('confidenceEdit')
+                                          htmlOutput('confidenceEdit'))
                                         ),
                                         width=10))
                            ),
-                           tabPanel("Results", id='panel3',
+                           tabPanel("Counts", id='panel3',
                                     sidebarLayout(
                                       sidebarPanel(
-                                        p("This page contains the numerical results of the clustering. It shows both the raw droplet count per cluster, as well as the
-                                          results according to each marker taken from the template, with its respective copies per droplet (CPD). 
-                                          You can download the spreadsheets:"),
+                                        div(id="stepDownCounts",
                                         downloadButton('downloadData', 'Download'),
                                         actionButton('resetData', 'Clear', icon("trash-o")),
+                                        p("You can download the spreadsheets or clear all results to start over.")),
+                                        div(id="stepSeeResults",
+                                        p("A visual representation of the CPDs for each marker can be seen on the next page:"),
+                                        actionButton('continueResults', "See Results", icon("check-square"), 
+                                                     style="color: #fff; background-color: #337ab7; border-color: #2e6da4")),
                                         width = 2
                                         ),
                                       mainPanel(
-                                        tabsetPanel(
-                                          tabPanel("Results per Cluster", dataTableOutput('clueResults')),
-                                          tabPanel("Results per Marker", dataTableOutput('markerResults'))
+                                        tabsetPanel(id='stepTabset',
+                                          tabPanel("Counts per Cluster", dataTableOutput('clueResults')),
+                                          tabPanel("Counts per Marker", dataTableOutput('markerResults'))
+                                        ),
+                                        width=10))),
+                           tabPanel("Results", id='panel4',
+                                    sidebarLayout(
+                                      sidebarPanel(
+                                        p("This page contains the final results of the clustering. Select controls in this experiment to see the difference for the targets."),
+                                        div(id='stepControls',
+                                        selectizeInput("control", "Select control:", NULL, multiple = T)),
+                                        width = 2
+                                        ),
+                                      mainPanel(
+                                        fluidRow(
+                                          div(id='stepResults',
+                                          plotlyOutput('finalViz'))
                                         ),
                                         width=10)))
                            

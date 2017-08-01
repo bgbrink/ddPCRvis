@@ -1,0 +1,3 @@
+step;element;intro;position
+1;#stepControls;You can select, which markers in this experiment are stable controls. The plot will update and show the difference in percent for the CPDs of each target vs the mean of the controls.; auto
+1;#stepResults;This page contains an interactive visualization of the final CPDs. If you selected one ore more controls in the panel to the left, the plot will update and show a bar chart representing difference in percent for the CPDs of each target vs the mean of the controls.; auto

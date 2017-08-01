@@ -1,0 +1,5 @@
+step;element;intro;position
+1;#stepPlots;Here you can see the result of the clustering algorithm and check for errors. On the left side a grey on white image of the raw data is be displayed. Next to it, a coloured image is shown, where each colour represents cluster membership for the respective droplet. On the right side, the agreement between the different underlying clustering algorithms is shown as measure of confidence (always 100% in 'fast mode', since only one algorithm is used).; auto
+2;#stepDownload;Download the raw data with a cluster number assigned to each point - or download all the respective plots that you see on the right side (this may take a while!); auto
+3;#stepEdit;If you want to correct one or multiple wells manually, you can do so. Just click on this button and new interface will open, which lets you re-assign droplets by hand using link and brush.; auto
+4;#stepCount;Lastly, don't forget to click this button to accept the result and count the droplets!; auto

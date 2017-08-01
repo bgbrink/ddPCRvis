@@ -1,23 +1,3 @@
-library(shiny)
-library(shinyjs)
-library(rhandsontable)
-library(ggplot2)
-library(parallel)
-library(R.utils)
-
-# Check if submodule folder is present 
-tryCatch( {
-  # load package w/o installing
-  library(devtools)
-  if (dir.exists('/srv/shiny-server/dropVis/dropClust')) {
-    load_all('/srv/shiny-server/dropVis/dropClust')
-  } else {
-    load_all('dropClust/')
-  }
-}, error = function(e) {
-  # load dropClust package
-  library(dropClust)
-})
 # By default, the file size limit is 5MB. It can be changed by
 # setting this option. Here we'll set limit to 1MB.
 options(shiny.maxRequestSize = 1*1024^2)
@@ -25,6 +5,7 @@ options(shiny.maxRequestSize = 1*1024^2)
 shinyServer(function(input, output, session) {
   
   #### Reseting Parameters for each session ####
+  gc()
   responses <<- list()
   makeReactiveBinding("responses")
   tmpResult <<- list()
@@ -36,19 +17,45 @@ shinyServer(function(input, output, session) {
   files <<- list()
   plots <<- list()
   template <<- NULL
+  helpData <<- NULL
   ##############################################
   
   # detect number of cores for parallelization
   if (Sys.info()['sysname'] == "Windows") {
     nrOfCores <- 1
   } else {
-    nrOfCores <- detectCores()
+    nrOfCores <- detectCores()/2
   }
   
   # reactive table for rhandsontable
   values <- reactiveValues() 
   setHot <- function(x) values[["hot"]] = x
 
+  observeEvent(input$mainPage, {
+    switch(input$mainPage, 
+           "Upload Files"={
+             helpData <<- read.csv("wwwIntroJS/helpUpload.csv", sep = ";")
+           },
+           "Clustering"={
+             helpData <<- read.csv("wwwIntroJS/helpClustering.csv", sep = ";")  
+           },
+           "Edit Clustering"={
+             helpData <<- read.csv("wwwIntroJS/helpEdit.csv", sep = ";")
+           },
+           "Counts"={
+             helpData <<- read.csv("wwwIntroJS/helpCounts.csv", sep = ";")
+           },
+           "Results"={
+             helpData <<- read.csv("wwwIntroJS/helpResults.csv", sep = ";")
+           })
+    # set help content
+    session$sendCustomMessage(type = 'setHelpContent', message = list(steps = toJSON(helpData) ))
+  })
+  
+  observeEvent(input$helpButton, {
+    # on click, send custom message to start help
+    session$sendCustomMessage(type = 'startHelp', message = list(""))
+  })
   
   observe({
     if (!is.null(input$template)) {
@@ -390,22 +397,23 @@ shinyServer(function(input, output, session) {
     for (i in filesAnalyzed) {
       local({
         my_i <- i
-        myCounts <- c(my_i, as.numeric(superResults[[my_i]]$counts))
-        names(myCounts) <- c("Well", names(superResults[[my_i]]$counts))
+        myCounts <- rbind(superResults[[my_i]]$counts)
+        myCounts <- data.frame(my_i, myCounts)
+        colnames(myCounts) <- c("Well", names(superResults[[my_i]]$counts))
         myCountedMarkers <- countedSuper[[my_i]]
         markers <- names(myCountedMarkers)
         sampleName <- template[template[,1] == my_i,2]
         for (j in markers) {
           tmp <- myCountedMarkers[[j]]
           if (length(tmp) == 1) next
-          markerRow <- c(my_i, sampleName, j, as.numeric(tmp$counts), as.numeric(tmp$cpd))
-          names(markerRow) <- c("Well","Sample name", "Marker", "droplet count", "CPD")
+          markerRow <- data.frame(my_i, sampleName, trim(j), tmp$counts, tmp$cpd)
+          colnames(markerRow) <- c("Well","Sample name", "Marker", "droplet count", "CPD")
           isolate(saveData(markerRow, "Marker"))
         }
         isolate(saveData(myCounts, "Cluster"))
       })
     }
-    updateNavbarPage(session, 'mainPage', selected = 'Results')
+    updateNavbarPage(session, 'mainPage', selected = 'Counts')
   })
   
   observeEvent(input$continueButton2, {
@@ -415,20 +423,26 @@ shinyServer(function(input, output, session) {
     for (i in filesAnalyzed) {
       local({
         my_i <- i
-        myCounts <- c(my_i, as.numeric(superResults[[my_i]]$counts))
+        myCounts <- rbind(superResults[[my_i]]$counts)
+        myCounts <- data.frame(my_i, myCounts)
+        colnames(myCounts) <- c("Well", names(superResults[[my_i]]$counts))
         myCountedMarkers <- countedSuper[[my_i]]
         markers <- names(myCountedMarkers)
         sampleName <- template[template[,1] == my_i,2]
         for (j in markers) {
           tmp <- myCountedMarkers[[j]]
           if (length(tmp) == 1) next
-          markerRow <- c(my_i, sampleName, j, as.numeric(tmp$counts), as.numeric(tmp$cpd))
-          names(markerRow) <- c("Well","Sample name", "Marker", "droplet count", "CPD")
+          markerRow <- data.frame(my_i, sampleName, trim(j), tmp$counts, tmp$cpd)
+          colnames(markerRow) <- c("Well","Sample name", "Marker", "droplet count", "CPD")
           isolate(saveData(markerRow, "Marker"))
         }
         isolate(saveData(myCounts, "Cluster"))
       })
     }
+    updateNavbarPage(session, 'mainPage', selected = 'Counts')
+  })
+  
+  observeEvent(input$continueResults, {
     updateNavbarPage(session, 'mainPage', selected = 'Results')
   })
   
@@ -503,7 +517,7 @@ shinyServer(function(input, output, session) {
   })
   
   saveData <- function(data, algorithm) {
-    data <- as.data.frame(t(data))
+ #   data <- as.data.frame(t(data))
     if (is.null(responses[[algorithm]])) {
       responses[[algorithm]] <<- rbind(responses[[algorithm]], data)
     } else if (ncol(responses[[algorithm]]) < ncol(data)) {
@@ -521,6 +535,11 @@ shinyServer(function(input, output, session) {
   
   observe({
     updateSelectInput(session, 'well', choices = filesAnalyzed)
+  })
+  
+  observe({
+    data <- loadData("Marker")
+    updateSelectInput(session, 'control', choices = levels(data$Marker))
   })
   
   
@@ -568,6 +587,26 @@ shinyServer(function(input, output, session) {
              })
              plotOutput('selected_Plot')
            })
+  })
+  
+  output$finalViz <- renderPlotly({
+    data <- loadData("Marker")
+    if (is.null(data)) {
+      return(NULL)
+    } else {
+      if (is.null(input$control)) {
+        p <- plot_ly(data, x = ~CPD, color = ~Marker, type = "box") %>% 
+          layout(title = 'CPDs per Marker', xaxis = list(title = 'CPDs'), yaxis = list(title = 'Marker name'))
+      } else {
+        markerMean <- aggregate(data[,c(4,5)], list(data$Marker), FUN = function(x) mean(as.numeric(as.character(x[x!=0]))))
+        selected <- markerMean[,1] %in% input$control
+        controls <- mean(markerMean[selected, 3])
+        tmpResult <- (markerMean[!selected, 3]/controls-1)*100
+        if (is.null(tmpResult)) return(NULL)
+        p <- plot_ly(x = markerMean[!selected, 1], y = tmpResult, type = "bar", orientation = 'v') %>% 
+          layout(title = 'Mean difference to Controls in percent', xaxis = list(title = 'Marker name'), yaxis = list(title = 'Difference in %'))
+      }
+    }
   })
   
   
