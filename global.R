@@ -5,6 +5,7 @@ library(jsonlite)
 library(ggplot2)
 library(parallel)
 library(R.utils)
+library(plotly)
 
 # Check if submodule folder is present 
 tryCatch( {
