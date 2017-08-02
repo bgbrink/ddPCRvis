@@ -8,10 +8,10 @@ An online version of the app is available under ....
 If you want to use it locally, you can simply clone this repository and run the app using RStudio. Please note, that the [dropClust](https://github.com/bgbrink/dropClust) package needs to be installed on your machine or the [submodule](https://github.com/blog/2104-working-with-submodules) in this repo needs to be cloned as well. 
 
 ## Usage
-Since you found your way here, I think it's safe assume you are familiar with websites and how to navigate them. dropVis works exactly the same. On top, you have the navigation bar:
+Since you found your way here, I think it's safe to assume that you are familiar with websites and how to navigate them. dropVis works exactly the same. On the top, you have the navigation bar:
 <p align="center">
 <img 
-src="https://user-images.githubusercontent.com/11661112/28871497-149f1f42-7785-11e7-907b-031690c14b81.PNG"  
+src="https://user-images.githubusercontent.com/11661112/28882929-0a121b74-77ad-11e7-97ef-025e7bdfde57.PNG"  
 alt="dropVis navigation">
 </p>
 
