@@ -5,7 +5,7 @@ dropVis is an interactive GUI for the [dropClust](https://github.com/bgbrink/dro
 ## Installation
 An online version of the app is available under ....
 
-If you want to use it locally, you can simply clone this repository and run the app using RStudio. Please note, that the [dropClust](https://github.com/bgbrink/dropClust) package needs to be installed on your machine or the [submodule](https://github.com/blog/2104-working-with-submodules) needs to be cloned as well. 
+If you want to use it locally, you can simply clone this repository and run the app using RStudio. Please note, that the [dropClust](https://github.com/bgbrink/dropClust) package needs to be installed on your machine or the [submodule](https://github.com/blog/2104-working-with-submodules) in this repo needs to be cloned as well. 
 
 ## Usage
 Since you found your way here, I think it's safe assume you are familiar with websites and how to navigate them. dropVis works exactly the same. On top, you have the navigation bar:
@@ -50,7 +50,7 @@ Ch1 Amplitude | Ch2 Amplitude
 2519.6355 |	7082.25049
 &#8942; | &#8942;
 
-After you hit 'Start Analysis', the dropClust algorithm will be started and the background. Once the computation is completed (allow ~5 seconds per file), you will be redirected to the next page, where you can inspect the result and spot any errors or other irregularities:
+After you hit 'Start Analysis', the [dropClust](https://github.com/bgbrink/dropClust) algorithm will be started and the background. Once the computation is completed (allow ~5 seconds per file), you will be redirected to the next page, where you can inspect the result and spot any errors or other irregularities:
 <p align="center">
 <img 
 src="https://user-images.githubusercontent.com/11661112/28871944-1f21e484-7787-11e7-908f-e932dfa9132a.PNG"  
