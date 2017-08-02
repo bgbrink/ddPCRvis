@@ -15,7 +15,7 @@ src="https://user-images.githubusercontent.com/11661112/28871497-149f1f42-7785-1
 alt="dropVis navigation">
 </p>
 
-Notice the help button on the right side. Click it and it will explain everything you need to to at the current step. On the left you side, you have a sidebar which contains all available input fields for the current view. Here is an example for the 'Upload files' view:
+Notice the help button on the right side. Click it and it will explain everything you need to know at the current step. On the left you side, you have a sidebar which contains all available input fields for the current view. Here is an example for the 'Upload files' view:
 <p align="left">
 <img 
 src="https://user-images.githubusercontent.com/11661112/28871441-da3a5e70-7784-11e7-93c6-1cfe41dd7880.PNG"  
