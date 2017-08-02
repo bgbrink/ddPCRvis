@@ -1,9 +1,9 @@
 # dropVis
 
-dropVis is an interactive GUI for the [dropClust](https://github.com/bgbrink/dropClust) algorithm. It was developed using the web application framework [Shiny](https://shiny.rstudio.com/). 
+dropVis is an interactive, web based GUI for the [dropClust](https://github.com/bgbrink/dropClust) algorithm. It was developed using the web application framework [Shiny](https://shiny.rstudio.com/). 
 
 ## Installation
-An online version of the app is available under ....
+An online version of the app is available under ....(coming soon)
 
 If you want to use it locally, you can simply clone this repository and run the app using RStudio. Please note, that the [dropClust](https://github.com/bgbrink/dropClust) package needs to be installed on your machine or the [submodule](https://github.com/blog/2104-working-with-submodules) in this repo needs to be cloned as well. 
 
@@ -15,7 +15,7 @@ src="https://user-images.githubusercontent.com/11661112/28882929-0a121b74-77ad-1
 alt="dropVis navigation">
 </p>
 
-Notice the help button on the right side. Click it and it will explain everything you need to know at the current step. On the left you side, you have a sidebar which contains all available input fields for the current view. Here is an example for the 'Upload files' view:
+Notice the help button on the right side. Click it and it will explain everything you need to know on the current page. On the left side, a sidebar contains all available input fields for the current view. Here is an example for the 'Upload files' view:
 <p align="left">
 <img 
 src="https://user-images.githubusercontent.com/11661112/28871441-da3a5e70-7784-11e7-93c6-1cfe41dd7880.PNG"  
@@ -50,7 +50,7 @@ Ch1 Amplitude | Ch2 Amplitude
 2519.6355 |	7082.25049
 &#8942; | &#8942;
 
-After you hit 'Start Analysis', the [dropClust](https://github.com/bgbrink/dropClust) algorithm will be started and the background. Once the computation is completed (allow ~5 seconds per file), you will be redirected to the next page, where you can inspect the result and spot any errors or other irregularities:
+After you hit 'Start Analysis', the [dropClust](https://github.com/bgbrink/dropClust) algorithm will run in the background. Once the computation is completed (allow ~5 seconds per file), you will be redirected to the next page, where you can inspect the result and spot any errors or other irregularities. Depending on your internet connection and the number of files you submitted, loading the plots in the browser can take a little while, so please be patient.
 <p align="center">
 <img 
 src="https://user-images.githubusercontent.com/11661112/28871944-1f21e484-7787-11e7-908f-e932dfa9132a.PNG"  
