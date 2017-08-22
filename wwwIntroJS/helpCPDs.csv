@@ -1,0 +1,4 @@
+step;element;intro;position
+1;#stepTabCPDs;This table contains the results according to each target taken from the template, with its respective copies per droplet (CPDs).; auto
+2;#stepDownCPDs;Download the CPDs as spreadsheets (csv files) or clear all results to start over.; auto
+3;#stepSeeResults;A visual representation of the CPDs for each marker and the relative differences vs controls can be seen by following this button or clicking the 'Results' tab in the top menu.; auto

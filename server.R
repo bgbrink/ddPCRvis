@@ -45,6 +45,9 @@ shinyServer(function(input, output, session) {
            "Counts"={
              helpData <<- read.csv("wwwIntroJS/helpCounts.csv", sep = ";")
            },
+           "CPDs"={
+             helpData <<- read.csv("wwwIntroJS/helpCPDs.csv", sep = ";")
+           },
            "Results"={
              helpData <<- read.csv("wwwIntroJS/helpResults.csv", sep = ";")
            })
@@ -156,6 +159,14 @@ shinyServer(function(input, output, session) {
       return(NULL)
     }
 
+    selection <- vector()
+    if (!is.null(template)){
+      for (i in 4:7) {
+        tmp <- levels(template[,i])
+        selection <- unique(c(selection, tmp))
+      }
+    }
+    updateSelectInput(session, 'cControl', choices = trim(selection))
     sens <- input$sensitivity
     csvFiles <- mclapply(files, read.csv, mc.cores = nrOfCores)
     selectedRows <- subset(DF, DF[,8] == TRUE)
@@ -390,10 +401,9 @@ shinyServer(function(input, output, session) {
     updateNavbarPage(session, 'mainPage', selected = 'Edit Clustering')
   })
   
-  observeEvent(input$continueButton, {
-    responses <<- list()
+  observeEvent(input$continueCPDs, {
     template <- as.matrix(template)
-    countedSuper <- calculateCPDs(results = superResults, template = template)
+    countedSuper <- calculateCPDs(results = superResults, template = template, constantControl = input$cControl)
     for (i in filesAnalyzed) {
       local({
         my_i <- i
@@ -410,6 +420,20 @@ shinyServer(function(input, output, session) {
           colnames(markerRow) <- c("Well","Sample name", "Marker", "droplet count", "CPD")
           isolate(saveData(markerRow, "Marker"))
         }
+      })
+    }
+    updateNavbarPage(session, 'mainPage', selected = 'CPDs')
+  })
+  
+  observeEvent(input$continueButton, {
+    responses <<- list()
+    template <- as.matrix(template)
+    for (i in filesAnalyzed) {
+      local({
+        my_i <- i
+        myCounts <- rbind(superResults[[my_i]]$counts)
+        myCounts <- data.frame(my_i, myCounts)
+        colnames(myCounts) <- c("Well", names(superResults[[my_i]]$counts))
         isolate(saveData(myCounts, "Cluster"))
       })
     }
@@ -417,9 +441,8 @@ shinyServer(function(input, output, session) {
   })
   
   observeEvent(input$continueButton2, {
-    responses <<- list()
     template <- as.matrix(template)
-    countedSuper <- calculateCPDs(results = superResults, template = template)
+    countedSuper <- calculateCPDs(results = superResults, template = template, constantControl = input$cControl)
     for (i in filesAnalyzed) {
       local({
         my_i <- i
@@ -436,10 +459,9 @@ shinyServer(function(input, output, session) {
           colnames(markerRow) <- c("Well","Sample name", "Marker", "droplet count", "CPD")
           isolate(saveData(markerRow, "Marker"))
         }
-        isolate(saveData(myCounts, "Cluster"))
       })
     }
-    updateNavbarPage(session, 'mainPage', selected = 'Counts')
+    updateNavbarPage(session, 'mainPage', selected = 'CPDs')
   })
   
   observeEvent(input$continueResults, {
@@ -495,21 +517,15 @@ shinyServer(function(input, output, session) {
     })
   
   output$downloadData <- downloadHandler(
-    filename = function(){
-      # Time-stamp zip filename
-      paste0("results-", gsub("\\D", "_", Sys.time()), ".zip")
-    },
-    content = function(file){
-      if(length(responses) == 0){
-        # Protect against empty data.
-        return(NULL)
-      }
-      tempdir = paste0(tempdir(),"/", as.integer(Sys.time()), "/")
-      dir.create(tempdir, showWarnings = F)
-      for (i in 1:length(responses)) {
-        if (length(responses) >= i) write.csv(responses[[i]], file = paste0(tempdir, "Results_", names(responses)[i], ".csv"), row.names = F)
-      }
-      zip(zipfile = file, files = tempdir, flags = "-rj9X")
+    filename = function() { paste0("counts_", gsub("\\D", "_", Sys.time()), ".csv") },
+    content = function(file) {
+      write.csv(loadData("Cluster"), file, row.names = F)
+    })
+  
+  output$downloadCPDs <- downloadHandler(
+    filename = function() { paste0("CPDs_", gsub("\\D", "_", Sys.time()), ".csv") },
+    content = function(file) {
+      write.csv(loadData("Marker"), file, row.names = F)
     })
   
   observeEvent(input$resetData, {
@@ -541,7 +557,6 @@ shinyServer(function(input, output, session) {
     data <- loadData("Marker")
     updateSelectInput(session, 'control', choices = levels(data$Marker))
   })
-  
   
   output$originalPlotEdit <- renderUI({
     column(5,

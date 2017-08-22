@@ -1,4 +1,4 @@
 step;element;intro;position
-1;#stepTabset;The table below contains the numerical results of the clustering. It shows both the raw droplet count per cluster, as well as the results according to each marker taken from the template, with its respective copies per droplet (CPD). Switch between the two using these tabs.; auto
-2;#stepDownCounts;Download the droplet counts and CPDs as spreadsheets or clear all results to start over.; auto
-3;#stepSeeResults;A visual representation of the CPDs for each marker can be seen on following this button or clicking the 'Results' tab in the top menu.; auto
+1;#stepTabCounts;This table contains the numerical results of the clustering. It shows the raw droplet count for each cluster, where each row represents a file (or well).; auto
+2;#stepDownCounts;Download the droplet counts as a spreadsheet (csv file) or clear all results to start over.; auto
+3;#stepCalcCPDs;Select the constant reference control, which should be present in every row. This will be used to normalize the data before calculating the CPDs for each target.; auto
