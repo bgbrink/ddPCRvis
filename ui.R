@@ -13,7 +13,7 @@ shinyUI(tagList(useShinyjs(),
                 
                 # Add includes to the head of the page using the resource path
                 actionButton('helpButton', 'Help', icon("question-circle"), style = "background-color:green;color:white;position:fixed;right:40px;top:10px;z-index:100000000000", onclick="startHelp();"),
-                navbarPage("dropVis v0.96", id = "mainPage",
+                navbarPage("dropVis v0.98", id = "mainPage",
                            tabPanel("Upload Files", id='panel1',
                                     sidebarLayout(
                                       sidebarPanel(
@@ -68,7 +68,7 @@ shinyUI(tagList(useShinyjs(),
                                         actionButton('editButton', "Edit clustering", icon("pencil-square-o"))),
                                         div(id="stepCount",
                                         p("When you are satisfied, make sure you hit the following button to count the droplets and save the results:"),
-                                        actionButton('continueButton', "Count droplets!", icon("check-square"), 
+                                        actionButton('continueButton', "Count Droplets!", icon("check-square"), 
                                                      style="color: #fff; background-color: #337ab7; border-color: #2e6da4")),
                                         width = 2
                                       ),
@@ -81,22 +81,22 @@ shinyUI(tagList(useShinyjs(),
                                         ),
                                         width=10))
                            ),
-                           tabPanel("Edit Clustering", id='panel4',
+                           tabPanel("Edit Clustering", id='panel3',
                                     sidebarLayout(
                                       sidebarPanel(
                                         div(id="stepSelect",
                                         selectInput("well", "Select file:", NULL),
                                         p("Select the cluster you want to edit and draw a rectangle around the droplets that should be assigned to it in the black-and-white plot. Click 'Save Changes' to save your changes and continue with the next cluster or well."),
                                         radioButtons('clusters', NULL, choiceNames = myNames[1:16], choiceValues = c(1:16), inline = T),
-                                        actionButton('cancel', "Revert changes", icon("undo")),
-                                        actionButton('save', "Save changes", icon("floppy-o"))),
+                                        actionButton('cancel', "Revert Changes", icon("undo")),
+                                        actionButton('save', "Save Changes", icon("floppy-o"))),
                                         div(id="stepRerun",
                                         sliderInput("sensitivity", "Sensitivity",
                                                     min = .25, max = 2, value = 1, step = .25),
-                                        p("Adjust the sensitivity to find more (higher value) or less (lower value) cluster. Click the Re-Run button to run dropClust again for the selected file."),
+                                        actionButton('rerunButton', "Re-Run Algorithm", icon("refresh"))),
+                                        div(id="stepCount2",
                                         p("When you are satisfied, make sure you hit the following button to count the droplets and save the results:"),
-                                        actionButton('rerunButton', "Re-Run Algorithm", icon("refresh")),
-                                        actionButton('continueButton2', "Count droplets!", icon("check-square"), 
+                                        actionButton('continueButton2', "Count Droplets!", icon("check-square"), 
                                                      style="color: #fff; background-color: #337ab7; border-color: #2e6da4")),
                                         width = 2
                                       ),
@@ -109,31 +109,43 @@ shinyUI(tagList(useShinyjs(),
                                         ),
                                         width=10))
                            ),
-                           tabPanel("Counts", id='panel3',
+                           tabPanel("Counts", id='panel4',
                                     sidebarLayout(
                                       sidebarPanel(
                                         div(id="stepDownCounts",
                                         downloadButton('downloadData', 'Download'),
                                         actionButton('resetData', 'Clear', icon("trash-o")),
                                         p("You can download the spreadsheets or clear all results to start over.")),
-                                        div(id="stepSeeResults",
-                                        p("A visual representation of the CPDs for each marker can be seen on the next page:"),
-                                        actionButton('continueResults', "See Results", icon("check-square"), 
+                                        div(id="stepCalcCPDs",
+                                        selectizeInput("cControl", "Select constant control:", NULL),
+                                        actionButton('continueCPDs', "Calculate CPDs", icon("check-square"), 
                                                      style="color: #fff; background-color: #337ab7; border-color: #2e6da4")),
                                         width = 2
                                         ),
-                                      mainPanel(
-                                        tabsetPanel(id='stepTabset',
-                                          tabPanel("Counts per Cluster", dataTableOutput('clueResults')),
-                                          tabPanel("Counts per Marker", dataTableOutput('markerResults'))
-                                        ),
+                                      
+                                      mainPanel(div(id="stepTabCounts",dataTableOutput('clueResults')),
                                         width=10))),
-                           tabPanel("Results", id='panel4',
+                           tabPanel("CPDs", id='panel5',
+                                    sidebarLayout(
+                                      sidebarPanel(
+                                        div(id="stepDownCPDs",
+                                            downloadButton('downloadCPDs', 'Download'),
+                                            actionButton('resetData', 'Clear', icon("trash-o")),
+                                            p("You can download the spreadsheets or clear all results to start over.")),
+                                        div(id="stepSeeResults",
+                                            p("A visual representation of the CPDs for each marker can be seen on the next page:"),
+                                            actionButton('continueResults', "See Results", icon("check-square"), 
+                                                         style="color: #fff; background-color: #337ab7; border-color: #2e6da4")),
+                                        width = 2
+                                      ),
+                                      mainPanel(div(id="stepTabCPDs",dataTableOutput('markerResults')),
+                                        width=10))),
+                           tabPanel("Results", id='panel6',
                                     sidebarLayout(
                                       sidebarPanel(
                                         p("This page contains the final results of the clustering. Select controls in this experiment to see the difference for the targets."),
                                         div(id='stepControls',
-                                        selectizeInput("control", "Select control:", NULL, multiple = T)),
+                                        selectizeInput("control", "Select stable control(s):", NULL, multiple = T)),
                                         width = 2
                                         ),
                                       mainPanel(
