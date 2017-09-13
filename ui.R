@@ -13,7 +13,7 @@ shinyUI(tagList(useShinyjs(),
                 
                 # Add includes to the head of the page using the resource path
                 actionButton('helpButton', 'Help', icon("question-circle"), style = "background-color:green;color:white;position:fixed;right:40px;top:10px;z-index:100000000000", onclick="startHelp();"),
-                navbarPage("dropVis v0.99", id = "mainPage",
+                navbarPage("dropVis v1.0", id = "mainPage",
                            tabPanel("Upload Files", id='panel1',
                                     sidebarLayout(
                                       sidebarPanel(
@@ -96,7 +96,7 @@ shinyUI(tagList(useShinyjs(),
                                         actionButton('rerunButton', "Re-Run Algorithm", icon("refresh"))),
                                         div(id="stepCount2",
                                         p("When you are satisfied, make sure you hit the following button to count the droplets and save the results:"),
-                                        actionButton('continueButton2', "Count Droplets!", icon("check-square"), 
+                                        actionButton('continueButton2', "Count Droplets!", icon("check-square"),  
                                                      style="color: #fff; background-color: #337ab7; border-color: #2e6da4")),
                                         width = 2
                                       ),

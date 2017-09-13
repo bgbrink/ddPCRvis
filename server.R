@@ -18,6 +18,7 @@ shinyServer(function(input, output, session) {
   plots <<- list()
   template <<- NULL
   helpData <<- NULL
+  experimentName <<- NULL
   ##############################################
   
   # detect number of cores for parallelization
@@ -90,6 +91,10 @@ shinyServer(function(input, output, session) {
     Header <- readLines(input$templateFile$datapath[1], n = 1)
     Header <- gsub("[\\\"]", "", Header)
     if (substr(Header, start = 1, stop = 1) == ">") {
+      tmp <- unlist(strsplit(substring(Header, 2), ","))
+      tmp <- trimws(tmp)
+      experimentName <<- tmp[1]
+      
       ### validate stuff
       template <<- read.csv(input$templateFile$datapath[1], skip = 1)
       
@@ -446,32 +451,18 @@ shinyServer(function(input, output, session) {
   })
   
   observeEvent(input$continueButton2, {
-    countedSuper <- NULL
+    responses <<- list()
     template <- as.matrix(template)
-    tryCatch(countedSuper <- calculateCPDs(results = superResults, template = template, constantControl = input$cControl), error = function(e) {
-      info(e$message)
-    })
-    if (!is.null(countedSuper)){
-      for (i in filesAnalyzed) {
-        local({
-          my_i <- i
-          myCounts <- rbind(superResults[[my_i]]$counts)
-          myCounts <- data.frame(my_i, myCounts)
-          colnames(myCounts) <- c("Well", names(superResults[[my_i]]$counts))
-          myCountedMarkers <- countedSuper[[my_i]]
-          markers <- names(myCountedMarkers)
-          sampleName <- template[template[,1] == my_i,2]
-          for (j in markers) {
-            tmp <- myCountedMarkers[[j]]
-            if (length(tmp) == 1) next
-            markerRow <- data.frame(my_i, sampleName, trim(j), tmp$counts, tmp$cpd)
-            colnames(markerRow) <- c("Well","Sample name", "Marker", "droplet count", "CPD")
-            isolate(saveData(markerRow, "Marker"))
-          }
-        })
-      }
-      updateNavbarPage(session, 'mainPage', selected = 'CPDs')
+    for (i in filesAnalyzed) {
+      local({
+        my_i <- i
+        myCounts <- rbind(superResults[[my_i]]$counts)
+        myCounts <- data.frame(my_i, myCounts)
+        colnames(myCounts) <- c("Well", names(superResults[[my_i]]$counts))
+        isolate(saveData(myCounts, "Cluster"))
+      })
     }
+    updateNavbarPage(session, 'mainPage', selected = 'Counts')
   })
   
   observeEvent(input$continueResults, {
@@ -503,7 +494,7 @@ shinyServer(function(input, output, session) {
       tempdir = paste0(tempdir(),"/", as.integer(Sys.time()), "/")
       dir.create(tempdir, showWarnings = F)
       for (i in 1:length(filesAnalyzed)) {
-        if (length(plots) >= i) ggsave(paste0(tempdir, "Plot_", filesAnalyzed[i], ".png"), plots[[i]], device = device)
+        if (length(plots) >= i) ggsave(paste0(tempdir, experimentName, "_Plot_", filesAnalyzed[i], ".png"), plots[[i]], device = device)
       }
       zip(zipfile = file, files = tempdir, flags = "-rj9X")
     })
@@ -521,7 +512,7 @@ shinyServer(function(input, output, session) {
       tempdir = paste0(tempdir(),"/", as.integer(Sys.time()), "/")
       dir.create(tempdir, showWarnings = F)
       for (i in 1:length(filesAnalyzed)) {
-        if (length(superResults) >= i) write.csv(superResults[[i]]$data, file = paste0(tempdir, "Data_", filesAnalyzed[i], ".csv"))
+        if (length(superResults) >= i) write.csv(superResults[[i]]$data, file = paste0(tempdir, experimentName, "_Data_", filesAnalyzed[i], ".csv"))
       }
       zip(zipfile = file, files = tempdir, flags = "-rj9X")
     })
