@@ -13,7 +13,7 @@ shinyUI(tagList(useShinyjs(),
                 
                 # Add includes to the head of the page using the resource path
                 actionButton('helpButton', 'Help', icon("question-circle"), style = "background-color:green;color:white;position:fixed;right:40px;top:10px;z-index:100000000000", onclick="startHelp();"),
-                navbarPage("dropVis v0.98", id = "mainPage",
+                navbarPage("dropVis v0.99", id = "mainPage",
                            tabPanel("Upload Files", id='panel1',
                                     sidebarLayout(
                                       sidebarPanel(

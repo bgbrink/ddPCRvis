@@ -402,27 +402,32 @@ shinyServer(function(input, output, session) {
   })
   
   observeEvent(input$continueCPDs, {
+    countedSuper <- NULL
     template <- as.matrix(template)
-    countedSuper <- calculateCPDs(results = superResults, template = template, constantControl = input$cControl)
-    for (i in filesAnalyzed) {
-      local({
-        my_i <- i
-        myCounts <- rbind(superResults[[my_i]]$counts)
-        myCounts <- data.frame(my_i, myCounts)
-        colnames(myCounts) <- c("Well", names(superResults[[my_i]]$counts))
-        myCountedMarkers <- countedSuper[[my_i]]
-        markers <- names(myCountedMarkers)
-        sampleName <- template[template[,1] == my_i,2]
-        for (j in markers) {
-          tmp <- myCountedMarkers[[j]]
-          if (length(tmp) == 1) next
-          markerRow <- data.frame(my_i, sampleName, trim(j), tmp$counts, tmp$cpd)
-          colnames(markerRow) <- c("Well","Sample name", "Marker", "droplet count", "CPD")
-          isolate(saveData(markerRow, "Marker"))
-        }
-      })
+    tryCatch(countedSuper <- calculateCPDs(results = superResults, template = template, constantControl = input$cControl), error = function(e) {
+      info(e$message)
+    })
+    if (!is.null(countedSuper)){
+      for (i in filesAnalyzed) {
+        local({
+          my_i <- i
+          myCounts <- rbind(superResults[[my_i]]$counts)
+          myCounts <- data.frame(my_i, myCounts)
+          colnames(myCounts) <- c("Well", names(superResults[[my_i]]$counts))
+          myCountedMarkers <- countedSuper[[my_i]]
+          markers <- names(myCountedMarkers)
+          sampleName <- template[template[,1] == my_i,2]
+          for (j in markers) {
+            tmp <- myCountedMarkers[[j]]
+            if (length(tmp) == 1) next
+            markerRow <- data.frame(my_i, sampleName, trim(j), tmp$counts, tmp$cpd)
+            colnames(markerRow) <- c("Well","Sample name", "Marker", "droplet count", "CPD")
+            isolate(saveData(markerRow, "Marker"))
+          }
+        })
+      }
+      updateNavbarPage(session, 'mainPage', selected = 'CPDs')
     }
-    updateNavbarPage(session, 'mainPage', selected = 'CPDs')
   })
   
   observeEvent(input$continueButton, {
@@ -441,27 +446,32 @@ shinyServer(function(input, output, session) {
   })
   
   observeEvent(input$continueButton2, {
+    countedSuper <- NULL
     template <- as.matrix(template)
-    countedSuper <- calculateCPDs(results = superResults, template = template, constantControl = input$cControl)
-    for (i in filesAnalyzed) {
-      local({
-        my_i <- i
-        myCounts <- rbind(superResults[[my_i]]$counts)
-        myCounts <- data.frame(my_i, myCounts)
-        colnames(myCounts) <- c("Well", names(superResults[[my_i]]$counts))
-        myCountedMarkers <- countedSuper[[my_i]]
-        markers <- names(myCountedMarkers)
-        sampleName <- template[template[,1] == my_i,2]
-        for (j in markers) {
-          tmp <- myCountedMarkers[[j]]
-          if (length(tmp) == 1) next
-          markerRow <- data.frame(my_i, sampleName, trim(j), tmp$counts, tmp$cpd)
-          colnames(markerRow) <- c("Well","Sample name", "Marker", "droplet count", "CPD")
-          isolate(saveData(markerRow, "Marker"))
-        }
-      })
+    tryCatch(countedSuper <- calculateCPDs(results = superResults, template = template, constantControl = input$cControl), error = function(e) {
+      info(e$message)
+    })
+    if (!is.null(countedSuper)){
+      for (i in filesAnalyzed) {
+        local({
+          my_i <- i
+          myCounts <- rbind(superResults[[my_i]]$counts)
+          myCounts <- data.frame(my_i, myCounts)
+          colnames(myCounts) <- c("Well", names(superResults[[my_i]]$counts))
+          myCountedMarkers <- countedSuper[[my_i]]
+          markers <- names(myCountedMarkers)
+          sampleName <- template[template[,1] == my_i,2]
+          for (j in markers) {
+            tmp <- myCountedMarkers[[j]]
+            if (length(tmp) == 1) next
+            markerRow <- data.frame(my_i, sampleName, trim(j), tmp$counts, tmp$cpd)
+            colnames(markerRow) <- c("Well","Sample name", "Marker", "droplet count", "CPD")
+            isolate(saveData(markerRow, "Marker"))
+          }
+        })
+      }
+      updateNavbarPage(session, 'mainPage', selected = 'CPDs')
     }
-    updateNavbarPage(session, 'mainPage', selected = 'CPDs')
   })
   
   observeEvent(input$continueResults, {
@@ -614,11 +624,13 @@ shinyServer(function(input, output, session) {
           layout(title = 'CPDs per Marker', xaxis = list(title = 'CPDs'), yaxis = list(title = 'Marker name'))
       } else {
         markerMean <- aggregate(data[,c(4,5)], list(data$Marker), FUN = function(x) mean(as.numeric(as.character(x[x!=0]))))
+        markerSD <- aggregate(data[,c(4,5)], list(data$Marker), FUN = function(x) sd(as.numeric(as.character(x[x!=0]))))
         selected <- markerMean[,1] %in% input$control
         controls <- mean(markerMean[selected, 3])
         tmpResult <- (markerMean[!selected, 3]/controls-1)*100
+        tmpSD <- (markerSD[!selected, 3]/controls)*100
         if (is.null(tmpResult)) return(NULL)
-        p <- plot_ly(x = markerMean[!selected, 1], y = tmpResult, type = "bar", orientation = 'v') %>% 
+        p <- plot_ly(x = markerMean[!selected, 1], y = tmpResult, type = "bar", orientation = 'v', error_y = list(type = "data", array = tmpSD, color='#404040', thickness=1.5)) %>% 
           layout(title = 'Mean difference to Controls in percent', xaxis = list(title = 'Marker name'), yaxis = list(title = 'Difference in %'))
       }
     }
