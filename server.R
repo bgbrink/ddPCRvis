@@ -446,32 +446,18 @@ shinyServer(function(input, output, session) {
   })
   
   observeEvent(input$continueButton2, {
-    countedSuper <- NULL
+    responses <<- list()
     template <- as.matrix(template)
-    tryCatch(countedSuper <- calculateCPDs(results = superResults, template = template, constantControl = input$cControl), error = function(e) {
-      info(e$message)
-    })
-    if (!is.null(countedSuper)){
-      for (i in filesAnalyzed) {
-        local({
-          my_i <- i
-          myCounts <- rbind(superResults[[my_i]]$counts)
-          myCounts <- data.frame(my_i, myCounts)
-          colnames(myCounts) <- c("Well", names(superResults[[my_i]]$counts))
-          myCountedMarkers <- countedSuper[[my_i]]
-          markers <- names(myCountedMarkers)
-          sampleName <- template[template[,1] == my_i,2]
-          for (j in markers) {
-            tmp <- myCountedMarkers[[j]]
-            if (length(tmp) == 1) next
-            markerRow <- data.frame(my_i, sampleName, trim(j), tmp$counts, tmp$cpd)
-            colnames(markerRow) <- c("Well","Sample name", "Marker", "droplet count", "CPD")
-            isolate(saveData(markerRow, "Marker"))
-          }
-        })
-      }
-      updateNavbarPage(session, 'mainPage', selected = 'CPDs')
+    for (i in filesAnalyzed) {
+      local({
+        my_i <- i
+        myCounts <- rbind(superResults[[my_i]]$counts)
+        myCounts <- data.frame(my_i, myCounts)
+        colnames(myCounts) <- c("Well", names(superResults[[my_i]]$counts))
+        isolate(saveData(myCounts, "Cluster"))
+      })
     }
+    updateNavbarPage(session, 'mainPage', selected = 'Counts')
   })
   
   observeEvent(input$continueResults, {
