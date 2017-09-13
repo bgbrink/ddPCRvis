@@ -3,9 +3,9 @@
 dropVis is an interactive, web based GUI for the [dropClust](https://github.com/bgbrink/dropClust) algorithm. It was developed using the web application framework [Shiny](https://shiny.rstudio.com/). 
 
 ## Installation
-An online version of the app is available under ....(coming soon)
+An online version of the app is available under https://bibiserv.cebitec.uni-bielefeld.de/dropVis/
 
-If you want to use it locally, you can simply clone this repository and run the app using RStudio. Please note, that the [dropClust](https://github.com/bgbrink/dropClust) package needs to be installed on your machine or the [submodule](https://github.com/blog/2104-working-with-submodules) in this repo needs to be cloned as well. 
+If you want to use it locally, you can simply clone this repository and run the app using RStudio. Please note, that the [dropClust](https://github.com/bgbrink/dropClust) package needs to be installed on your machine or the [submodule](https://github.com/blog/2104-working-with-submodules) in this repo needs to be cloned as well using ```git clone --recursive https://github.com/bgbrink/dropVis.git```
 
 ## Usage
 Since you found your way here, I think it's safe to assume that you are familiar with websites and how to navigate them. dropVis works exactly the same. On the top, you have the navigation bar:
