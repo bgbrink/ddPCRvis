@@ -7,11 +7,24 @@ An online version of the app is available under https://bibiserv.cebitec.uni-bie
 
 If you want to use it locally, you can simply clone this repository and run the app using RStudio. Please note, that the [dropClust](https://github.com/bgbrink/dropClust) package needs to be installed on your machine or the [submodule](https://github.com/blog/2104-working-with-submodules) in this repo needs to be cloned as well using ```git clone --recursive https://github.com/bgbrink/dropVis.git```
 
+You also need to install the following packages.
+
+```R
+install.packages(c('shiny', 'shinyjs', 'rhandsontable', 'jsonlite', 'devtools', 'R.utils', 'roxygen2', 'plotrix', 'clue', 'parallel', 'ggplot2', 'openxlsx', 'plotly'), repos='https://cran.rstudio.com/')
+```
+
+If you use dropClust as a submodule, you also need the following Bioconductor packages.
+```R
+## try http:// if https:// URLs are not supported
+source("https://bioconductor.org/biocLite.R")
+biocLite(c('flowDensity', 'SamSPECTRAL', 'flowPeaks'))
+```
+
 ## Usage
 Since you found your way here, I think it's safe to assume that you are familiar with websites and how to navigate them. dropVis works exactly the same. On the top, you have the navigation bar:
 <p align="center">
 <img 
-src="https://user-images.githubusercontent.com/11661112/28882929-0a121b74-77ad-11e7-97ef-025e7bdfde57.PNG"  
+src="https://user-images.githubusercontent.com/11661112/30427716-20a7b36a-9951-11e7-9d85-a8e25a84abd5.PNG"  
 alt="dropVis navigation">
 </p>
 
@@ -65,6 +78,11 @@ alt="dropVis counts example">
 </p>
 
 Lastly, dropVis provides you an interactive visualization to explore the results and compare markers vs stable controls.
+<p align="center">
+<img 
+src="https://user-images.githubusercontent.com/11661112/30428577-6dae989c-9954-11e7-8651-09af23342ba7.PNG"  
+alt="dropVis results vis">
+</p>
 
 
 ## License
