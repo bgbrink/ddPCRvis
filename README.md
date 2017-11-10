@@ -1,11 +1,11 @@
-# dropVis
+# ddPCRvis
 
-dropVis is an interactive, web based GUI for the [dropClust](https://github.com/bgbrink/dropClust) algorithm. It was developed using the web application framework [Shiny](https://shiny.rstudio.com/). 
+ddPCRvis is an interactive, web based GUI for the [dropClust](https://github.com/bgbrink/dropClust) algorithm. It was developed using the web application framework [Shiny](https://shiny.rstudio.com/). 
 
 ## Installation
-An online version of the app is available under https://bibiserv.cebitec.uni-bielefeld.de/dropVis/
+An online version of the app is available under https://bibiserv.cebitec.uni-bielefeld.de/ddPCRvis/
 
-If you want to use it locally, you can simply clone this repository and run the app using RStudio. Please note, that the [dropClust](https://github.com/bgbrink/dropClust) package needs to be installed on your machine or the [submodule](https://github.com/blog/2104-working-with-submodules) in this repo needs to be cloned as well using ```git clone --recursive https://github.com/bgbrink/dropVis.git```
+If you want to use it locally, you can simply clone this repository and run the app using RStudio. Please note, that the [dropClust](https://github.com/bgbrink/dropClust) package needs to be installed on your machine or the [submodule](https://github.com/blog/2104-working-with-submodules) in this repo needs to be cloned as well using ```git clone --recursive https://github.com/bgbrink/ddPCRvis.git```
 
 You also need to install the following packages.
 
@@ -21,18 +21,18 @@ biocLite(c('flowDensity', 'SamSPECTRAL', 'flowPeaks'))
 ```
 
 ## Usage
-Since you found your way here, I think it's safe to assume that you are familiar with websites and how to navigate them. dropVis works exactly the same. On the top, you have the navigation bar:
+Since you found your way here, I think it's safe to assume that you are familiar with websites and how to navigate them. ddPCRvis works exactly the same. On the top, you have the navigation bar:
 <p align="center">
 <img 
 src="https://user-images.githubusercontent.com/11661112/30427716-20a7b36a-9951-11e7-9d85-a8e25a84abd5.PNG"  
-alt="dropVis navigation">
+alt="ddPCRvis navigation">
 </p>
 
 Notice the help button on the right side. Click it and it will explain everything you need to know on the current page. On the left side, a sidebar contains all available input fields for the current view. Here is an example for the 'Upload files' view:
 <p align="left">
 <img 
 src="https://user-images.githubusercontent.com/11661112/28871441-da3a5e70-7784-11e7-93c6-1cfe41dd7880.PNG"  
-alt="dropVis upload example">
+alt="ddPCRvis upload example">
 </p>
 
 To get started, you have to upload your data. Since one experiment most likely consists of many different files, naming them apropriately is important in order to keep things organized. We chose to use a unique identifier in each filename of the form `"^[[:upper:]][[:digit:]][[:digit:]]$"` (A01, A02, A03, B01, B02, ...), which is usually included automatically by the ddPCR machine.
@@ -67,21 +67,21 @@ After you hit 'Start Analysis', the [dropClust](https://github.com/bgbrink/dropC
 <p align="center">
 <img 
 src="https://user-images.githubusercontent.com/11661112/28871944-1f21e484-7787-11e7-908f-e932dfa9132a.PNG"  
-alt="dropVis plots example">
+alt="ddPCRvis plots example">
 </p>
 
 You can manually edit the clustering result for each well individually. Once you are satisfied, click on 'Count droplets' to continue. You can then inspect and download the droplet counts for each cluster, as well as the individual copies per droplet (CPDs) per marker, if you provided this information in the template.
 <p align="center">
 <img 
 src="https://user-images.githubusercontent.com/11661112/28872118-0b843494-7788-11e7-9102-f4177999e97d.PNG"  
-alt="dropVis counts example">
+alt="ddPCRvis counts example">
 </p>
 
-Lastly, dropVis provides you an interactive visualization to explore the results and compare markers vs stable controls.
+Lastly, ddPCRvis provides you an interactive visualization to explore the results and compare markers vs stable controls.
 <p align="center">
 <img 
 src="https://user-images.githubusercontent.com/11661112/30428577-6dae989c-9954-11e7-8651-09af23342ba7.PNG"  
-alt="dropVis results vis">
+alt="ddPCRvis results vis">
 </p>
 
 
