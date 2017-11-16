@@ -1,0 +1,3 @@
+[submodule "ddPCRclust"]
+	path = ddPCRclust
+	url = https://github.com/bgbrink/ddPCRclust

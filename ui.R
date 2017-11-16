@@ -13,11 +13,11 @@ shinyUI(tagList(useShinyjs(),
                 
                 # Add includes to the head of the page using the resource path
                 actionButton('helpButton', 'Help', icon("question-circle"), style = "background-color:green;color:white;position:fixed;right:40px;top:10px;z-index:100000000000", onclick="startHelp();"),
-                navbarPage("dropVis v1.0", id = "mainPage",
+                navbarPage("ddPCRvis v1.0", id = "mainPage",
                            tabPanel("Upload Files", id='panel1',
                                     sidebarLayout(
                                       sidebarPanel(
-                                        p("Welcome to dropVis, a visual interface for the dropClust package! If this is your first time here, click the green button in the top right corner."),
+                                        p("Welcome to ddPCRvis, a visual interface for the ddPCRclust package! If this is your first time here, click the green button in the top right corner."),
                                         div(id="stepTemplate",
                                         fileInput('templateFile', 'Choose template to upload',
                                                   multiple = F,
