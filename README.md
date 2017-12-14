@@ -1,11 +1,11 @@
 # ddPCRvis
 
-ddPCRvis is an interactive, web based GUI for the [dropClust](https://github.com/bgbrink/dropClust) algorithm. It was developed using the web application framework [Shiny](https://shiny.rstudio.com/). 
+ddPCRvis is an interactive, web based GUI for the [ddPCRclust](https://github.com/bgbrink/ddPCRclust) algorithm. It was developed using the web application framework [Shiny](https://shiny.rstudio.com/). 
 
 ## Installation
 An online version of the app is available under https://bibiserv.cebitec.uni-bielefeld.de/ddPCRvis/
 
-If you want to use it locally, you can simply clone this repository and run the app using RStudio. Please note, that the [dropClust](https://github.com/bgbrink/dropClust) package needs to be installed on your machine or the [submodule](https://github.com/blog/2104-working-with-submodules) in this repo needs to be cloned as well using ```git clone --recursive https://github.com/bgbrink/ddPCRvis.git```
+If you want to use it locally, you can simply clone this repository and run the app using RStudio. Please note, that the [ddPCRclust](https://github.com/bgbrink/ddPCRclust) package needs to be installed on your machine or the [submodule](https://github.com/blog/2104-working-with-submodules) in this repo needs to be cloned as well using ```git clone --recursive https://github.com/bgbrink/ddPCRvis.git```
 
 You also need to install the following packages.
 
