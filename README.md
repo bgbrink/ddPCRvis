@@ -13,7 +13,7 @@ You also need to install the following packages.
 install.packages(c('shiny', 'shinyjs', 'rhandsontable', 'jsonlite', 'devtools', 'R.utils', 'roxygen2', 'plotrix', 'clue', 'parallel', 'ggplot2', 'openxlsx', 'plotly'), repos='https://cran.rstudio.com/')
 ```
 
-If you use dropClust as a submodule, you also need the following Bioconductor packages.
+If you use ddPCRclust as a submodule, you also need the following Bioconductor packages.
 ```R
 ## try http:// if https:// URLs are not supported
 source("https://bioconductor.org/biocLite.R")
@@ -63,7 +63,7 @@ Ch1 Amplitude | Ch2 Amplitude
 2519.6355 |	7082.25049
 &#8942; | &#8942;
 
-After you hit 'Start Analysis', the [dropClust](https://github.com/bgbrink/dropClust) algorithm will run in the background. Once the computation is completed (allow ~5 seconds per file), you will be redirected to the next page, where you can inspect the result and spot any errors or other irregularities. Depending on your internet connection and the number of files you submitted, loading the plots in the browser can take a little while, so please be patient.
+After you hit 'Start Analysis', the [ddPCRclust](https://github.com/bgbrink/ddPCRclust) algorithm will run in the background. Once the computation is completed (allow ~5 seconds per file), you will be redirected to the next page, where you can inspect the result and spot any errors or other irregularities. Depending on your internet connection and the number of files you submitted, loading the plots in the browser can take a little while, so please be patient.
 <p align="center">
 <img 
 src="https://user-images.githubusercontent.com/11661112/28871944-1f21e484-7787-11e7-908f-e932dfa9132a.PNG"  
