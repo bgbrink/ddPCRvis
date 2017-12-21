@@ -1,6 +1,6 @@
 step;element;intro;position
 1;#stepTemplate;You have the option to upload a template file, which specifies the setup of the ddPCR reactions for your experiment. For specifications on how this file needs to be formatted, please check the <a href="https://github.com/bgbrink/ddPCRvis" target="_blank">ddPCRvis</a> page on Github. If you do not have one available, just upload the csv files directly and ddPCRvis will create a standard template, which you can edit.; auto
-2;#stepFiles;Here you can upload the raw data files from a Bio-Rad ddPCR run. For specifications on how these files need to be formatted, please check the <a href="https://github.com/bgbrink/ddPCRvis" target="_blank">ddPCRvis</a> page on Github.; auto
+2;#stepFiles;Here you can upload the raw csv files from a Bio-Rad ddPCR run. For specifications on how these files need to be formatted, please check the <a href="https://github.com/bgbrink/ddPCRvis" target="_blank">ddPCRvis</a> page on Github.; auto
 3;#stepOutput;Here you can set up the template after you uploaded the csv files containing the raw data or edit the template you provided.; auto
 4;#stepQuick;Run a simpler version of the algorithm that is about 10x faster. For clean data, this can already deliver good results. In any case it is useful to get a quick overview over the data.; auto
-5;#stepRun;Once everything is set up, let the magic begin!; auto
+5;#stepRun;If you don't have any data available and just want to try out the app, you can load an example dataset. Once everything is set up, let the magic begin!; auto

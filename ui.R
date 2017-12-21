@@ -13,7 +13,8 @@ shinyUI(tagList(useShinyjs(),
                 
                 # Add includes to the head of the page using the resource path
                 actionButton('helpButton', 'Help', icon("question-circle"), style = "background-color:green;color:white;position:fixed;right:40px;top:10px;z-index:100000000000", onclick="startHelp();"),
-                navbarPage("ddPCRvis v1.0", id = "mainPage",
+                actionButton('helpButton', 'GitHub page', icon("github"), style = "background-color:#333;color:white;position:fixed;right:120px;top:10px;z-index:100000000000", onclick="location.href='https://github.com/bgbrink/ddPCRvis#readme';"),
+                navbarPage("ddPCRvis v1.1", id = "mainPage",
                            tabPanel("Upload Files", id='panel1',
                                     sidebarLayout(
                                       sidebarPanel(
@@ -46,6 +47,8 @@ shinyUI(tagList(useShinyjs(),
                                         checkboxInput('quick', 'Run fast version', TRUE)),
                                         div(id="stepRun",
                                         actionButton('run', "Start Analysis!", icon("paper-plane"), 
+                                                     style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
+                                        actionButton('example', "Load example", icon("info-circle"), 
                                                      style="color: #fff; background-color: #337ab7; border-color: #2e6da4")),
                                         width = 2
                                         ),
@@ -154,5 +157,7 @@ shinyUI(tagList(useShinyjs(),
                                           plotlyOutput('finalViz'))
                                         ),
                                         width=10)))
-                           
+                           # div(class = "footer",
+                           #     p("Copyright (c) 2017 Benedikt G. Brink, Bielefeld University. This app was released under the MIT license and the source code is available" , a(href="https://github.com/bgbrink/ddPCRvis", target="_blank", "here."))
+                           # )
                            )))

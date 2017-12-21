@@ -61,6 +61,54 @@ shinyServer(function(input, output, session) {
     session$sendCustomMessage(type = 'startHelp', message = list(""))
   })
   
+  observeEvent(input$example, {
+    # on click, load example files
+    if (dir.exists('/srv/shiny-server/ddPCRvis/ddPCRclust/inst/extdata')) {
+      exampleFiles <- list.files("/srv/shiny-server/ddPCRvis/ddPCRclust/inst/extdata", full.names = TRUE) 
+    } else if (dir.exists('ddPCRclust/inst/extdata')){
+      exampleFiles <- list.files("ddPCRclust/inst/extdata", full.names = TRUE) 
+    } else {
+      exampleFiles <- list.files(paste0(find.package("ddPCRclust"), "/extdata"), full.names = TRUE) 
+    }
+    templateFile <- exampleFiles[9]
+    
+    DF <- NULL
+    ######
+    Header <- readLines(templateFile, n = 1)
+    Header <- gsub("[\\\"]", "", Header)
+    tmp <- unlist(strsplit(substring(Header, 2), ","))
+    tmp <- trimws(tmp)
+    experimentName <<- tmp[1]
+    
+    ### validate stuff
+    template <<- read.csv(templateFile, skip = 1)
+    
+    DF <- template
+    Analyze <- rep(F, nrow(DF))
+    DF = cbind(DF, Analyze)
+    
+    setHot(DF)
+    
+    files <- exampleFiles[1:8]
+    
+    DF <- values[["hot"]]
+    for (i in 1:8) {
+      filename <- basename(files[i])
+      explode <- unlist(strsplit(filename, "_"))
+      id <- grep("^[[:upper:]][[:digit:]][[:digit:]]$", explode, value = T)
+      pos <- match(id, DF[,1])
+      if (!is.na(pos)) {
+        file <- files[i]
+        names(file) <- basename(files[i])
+        files[[id]] <<- file
+        ## make green check V
+        DF[pos,8] <- T
+      }
+    }
+    setHot(DF)
+    
+  })
+  
   observe({
     if (!is.null(input$template)) {
       DF <- hot_to_r(input$template)
