@@ -19,6 +19,10 @@ If you use ddPCRclust as a submodule, you also need the following Bioconductor p
 source("https://bioconductor.org/biocLite.R")
 biocLite(c('flowDensity', 'SamSPECTRAL', 'flowPeaks'))
 ```
+To run the app on your local computer, use RStudio or run the following command and replace ~ with the directory where you extracted the ddPCRvis folder.
+```R
+R -e "shiny::runApp('~/ddPCRvis')"
+```
 
 ## Usage
 Since you found your way here, I think it's safe to assume that you are familiar with websites and how to navigate them. ddPCRvis works exactly the same. On the top, you have the navigation bar:
