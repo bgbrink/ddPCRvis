@@ -19,7 +19,7 @@ If you use ddPCRclust as a submodule, you also need the following Bioconductor p
 source("https://bioconductor.org/biocLite.R")
 biocLite(c('flowDensity', 'SamSPECTRAL', 'flowPeaks'))
 ```
-To run the app on your local computer, use RStudio or run the following command and replace ~ with the directory where you extracted the ddPCRvis folder.
+To run the app on your local computer, use RStudio or run the following command and replace ~ with the location of your ddPCRvis folder.
 ```R
 R -e "shiny::runApp('~/ddPCRvis')"
 ```
