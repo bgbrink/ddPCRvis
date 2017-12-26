@@ -51,7 +51,7 @@ G07|Cell line|3|a||c|d
 G08|Cell line|3|a||c|d
 E09|FFPE|2|||c|d
 
-The raw data should be *csv* files. Each file represents a two-dimensional data frame. Each row within the data frame represents a single droplet, each column the respective intensities per colour channel:
+The raw data should be *csv* files. Each file represents a two-dimensional data frame. Each row within the data frame represents a single droplet, each column the respective intensities per colour channel (please make sure your decimal symbol is a point):
 
 Ch1 Amplitude | Ch2 Amplitude 
 --- | --- 
