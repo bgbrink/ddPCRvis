@@ -5,20 +5,14 @@ ddPCRvis is an interactive, web based GUI for the [ddPCRclust](https://github.co
 ## Installation
 An online version of the app is available under https://bibiserv.cebitec.uni-bielefeld.de/ddPCRvis/
 
-If you want to use it locally, you can simply clone this repository and run the app using RStudio. Please note, that the [ddPCRclust](https://github.com/bgbrink/ddPCRclust) package needs to be installed on your machine or the [submodule](https://github.com/blog/2104-working-with-submodules) in this repo needs to be cloned as well using ```git clone --recursive https://github.com/bgbrink/ddPCRvis.git```
+If you want to use it locally, you can simply clone this repository and run the app using RStudio. Please note, that the [ddPCRclust](https://github.com/bgbrink/ddPCRclust) package needs to be installed on your machine.
 
-You also need to install the following packages.
+You also need to install the following packages:
 
 ```R
-install.packages(c('shiny', 'shinyjs', 'rhandsontable', 'jsonlite', 'devtools', 'R.utils', 'roxygen2', 'plotrix', 'clue', 'parallel', 'ggplot2', 'openxlsx', 'plotly'), repos='https://cran.rstudio.com/')
+install.packages(c('shiny', 'shinyjs', 'rhandsontable', 'jsonlite', 'plotly'), repos='https://cran.rstudio.com/')
 ```
 
-If you use ddPCRclust as a submodule, you also need the following Bioconductor packages.
-```R
-## try http:// if https:// URLs are not supported
-source("https://bioconductor.org/biocLite.R")
-biocLite(c('flowDensity', 'SamSPECTRAL', 'flowPeaks'))
-```
 To run the app on your local computer, use RStudio or run the following command and replace ~ with the location of your ddPCRvis folder.
 ```R
 R -e "shiny::runApp('~/ddPCRvis')"
@@ -88,27 +82,12 @@ src="https://user-images.githubusercontent.com/11661112/30428577-6dae989c-9954-1
 alt="ddPCRvis results vis">
 </p>
 
+## Reference
+Brink, Benedikt G., et al. "ddPCRclust: An R package and Shiny app for automated analysis of multiplexed ddPCR data." *Bioinformatics* (2018).
+
+https://www.ncbi.nlm.nih.gov/pubmed/29534153
+
 
 ## License
+ddPCRvis is licensed under the [Artistic License 2.0](https://opensource.org/licenses/Artistic-2.0).
 
-    MIT License
-
-    Copyright (c) 2017 Benedikt G. Brink
-
-    Permission is hereby granted, free of charge, to any person obtaining a copy
-    of this software and associated documentation files (the "Software"), to deal
-    in the Software without restriction, including without limitation the rights
-    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    copies of the Software, and to permit persons to whom the Software is
-    furnished to do so, subject to the following conditions:
-
-    The above copyright notice and this permission notice shall be included in all
-    copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-    SOFTWARE.
