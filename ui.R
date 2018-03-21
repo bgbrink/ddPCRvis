@@ -14,7 +14,7 @@ shinyUI(tagList(useShinyjs(),
                 # Add includes to the head of the page using the resource path
                 actionButton('helpButton', 'Help', icon("question-circle"), style = "background-color:green;color:white;position:fixed;right:40px;top:10px;z-index:100000000000", onclick="startHelp();"),
                 actionButton('helpButton', 'GitHub page', icon("github"), style = "background-color:#333;color:white;position:fixed;right:120px;top:10px;z-index:100000000000", onclick="location.href='https://github.com/bgbrink/ddPCRvis#readme';"),
-                navbarPage("ddPCRvis v1.1", id = "mainPage",
+                navbarPage("ddPCRvis v1.2", id = "mainPage",
                            tabPanel("Upload Files", id='panel1',
                                     sidebarLayout(
                                       sidebarPanel(
