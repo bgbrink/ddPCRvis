@@ -25,7 +25,7 @@ shinyServer(function(input, output, session) {
   if (Sys.info()['sysname'] == "Windows") {
     nrOfCores <- 1
   } else {
-    nrOfCores <- detectCores()/2
+    nrOfCores <- detectCores()/4
   }
   
   # reactive table for rhandsontable
