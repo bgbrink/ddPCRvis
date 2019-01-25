@@ -34,5 +34,6 @@ RUN apt-get update && apt-get install -y \
 EXPOSE 3838
 
 COPY shiny-server.sh /usr/bin/shiny-server.sh
+RUN chmod 0755 /usr/bin/shiny-server.sh
 
 CMD ["/usr/bin/shiny-server.sh"]
